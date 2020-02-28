@@ -11,6 +11,7 @@
     <modules>
         <module>jdk-learn</module>
         <module>jmx-learn</module>
+        <module>kafka-learn</module>
     </modules>
 
     <properties>
