@@ -12,6 +12,7 @@
         <module>jdk-learn</module>
         <module>jmx-learn</module>
         <module>kafka-learn</module>
+        <module>spark-learn</module>
     </modules>
 
     <properties>
