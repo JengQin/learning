@@ -1,11 +1,14 @@
 package com.jeng.spark.operator;
 
 import com.jeng.spark.SparkSessionBuilder;
+import org.apache.spark.HashPartitioner;
+import org.apache.spark.Partitioner;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.PairFunction;
+import org.apache.spark.util.SizeEstimator;
 import scala.Tuple2;
 
 import java.util.ArrayList;
@@ -15,7 +18,7 @@ import java.util.List;
 
 public class MapPartitionsWithIndex {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         final List<String> list = new ArrayList<String>();
         list.add("Java,100,u01");
         list.add("Java,95,u02");
@@ -48,6 +51,9 @@ public class MapPartitionsWithIndex {
         }, true);
 
         long count = rdd2.count();
+//        Thread.sleep(10000000L);
+        long estimate = SizeEstimator.estimate(rdd2);
+        System.out.println(estimate);
         System.out.println(count);
     }
 }

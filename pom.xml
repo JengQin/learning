@@ -13,6 +13,7 @@
         <module>jmx-learn</module>
         <module>kafka-learn</module>
         <module>spark-learn</module>
+        <module>zookeeper-learn</module>
     </modules>
 
     <properties>
