@@ -1,6 +1,8 @@
 package com.jeng.spark.operator;
 
 import com.jeng.spark.SparkSessionBuilder;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.apache.spark.HashPartitioner;
 import org.apache.spark.Partitioner;
 import org.apache.spark.api.java.JavaPairRDD;
@@ -19,6 +21,7 @@ import java.util.List;
 public class MapPartitionsWithIndex {
 
     public static void main(String[] args) throws InterruptedException {
+        Logger.getLogger("org").setLevel(Level.DEBUG);
         final List<String> list = new ArrayList<String>();
         list.add("Java,100,u01");
         list.add("Java,95,u02");
