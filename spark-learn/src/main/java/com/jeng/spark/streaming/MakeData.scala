@@ -4,10 +4,10 @@ import java.io.PrintStream
 import java.net.ServerSocket
 
 object MakeData {
-
+  val PORT: Int = 8089
   def main(args: Array[String]): Unit = {
 
-    val server = new ServerSocket(8089)
+    val server = new ServerSocket(PORT)
     println("Server start")
     while(true) {
       val socket = server.accept()
@@ -15,7 +15,7 @@ object MakeData {
       new Thread(){
         private var num = 0
         override def run(): Unit = {
-          print("new client start")
+          println("new client start")
           val outputStream = socket.getOutputStream
           val printer = new PrintStream(outputStream)
           while(socket.isConnected) {
