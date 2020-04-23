@@ -2,23 +2,22 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>learning</artifactId>
+        <groupId>com.jeng</groupId>
+        <version>1.0</version>
+    </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.jeng</groupId>
-    <artifactId>learning</artifactId>
+    <artifactId>flink-learn</artifactId>
     <packaging>pom</packaging>
-    <version>1.0</version>
     <modules>
-        <module>jdk-learn</module>
-        <module>jmx-learn</module>
-        <module>kafka-learn</module>
-        <module>spark-learn</module>
-        <module>zookeeper-learn</module>
-        <module>flink-learn</module>
+        <module>flink-cep</module>
+        <module>flink-sql</module>
+        <module>flink-stream</module>
     </modules>
 
     <properties>
-        <java.version>1.8</java.version>
         <maven.compiler.source.version>1.8</maven.compiler.source.version>
         <maven.compiler.target.version>1.8</maven.compiler.target.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

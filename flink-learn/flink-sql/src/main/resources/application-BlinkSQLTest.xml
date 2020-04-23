@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+    <context:property-placeholder location="classpath:./application.properties"/>
+    <!--main-->
+    <bean id="main_app" class="com.jeng.flink.blink.sql.BlinkSQLTest">
+        <property name="sqlConfig" ref="sqlConfig"/>
+    </bean>
+
+    <!--SQL配置-->
+    <bean id="sqlConfig" class="com.jeng.flink.config.SQLConfig">
+        <property name="sqlModels">
+            <list>
+                <ref bean="kafka_source_table_ddl"/>
+                <ref bean="mysql_sink_table_ddl"/>
+                <ref bean="insert_sql"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- SQL -->
+    <bean id="kafka_source_table_ddl" class="com.jeng.flink.config.SQLModel" init-method="init">
+        <property name="sqlNo" value="1"/>
+        <property name="type" value="CREATE"/>
+        <property name="sql" value="
+            CREATE TABLE user_log (
+                user_id VARCHAR,
+                item_id VARCHAR,
+                category_id VARCHAR,
+                behavior VARCHAR,
+                ts TIMESTAMP
+            ) WITH (
+                'connector.type' = 'kafka',
+                'connector.version' = '0.10',
+                'connector.topic' = 'user_behavior',
+                'connector.startup-mode' = 'earliest-offset',
+                'connector.properties.0.key' = 'zookeeper.connect',
+                'connector.properties.0.value' = 'hadoop1:2181',
+                'connector.properties.1.key' = 'bootstrap.servers',
+                'connector.properties.1.value' = 'hadoop1:6667',
+                'connector.properties.2.key' = 'group.id',
+                'connector.properties.2.value' = 'flink-test-group-id',
+                'update-mode' = 'append',
+                'format.type' = 'json',
+                'format.derive-schema' = 'true'
+            )
+        "
+        />
+    </bean>
+
+    <bean id="mysql_sink_table_ddl" class="com.jeng.flink.config.SQLModel" init-method="init">
+        <property name="sqlNo" value="2"/>
+        <property name="type" value="CREATE"/>
+        <property name="sql" value="
+            CREATE TABLE pvuv_sink (
+                dt VARCHAR,
+                pv BIGINT,
+                uv BIGINT
+            ) WITH (
+                'connector.type' = 'jdbc',
+                'connector.url' = 'jdbc:mysql://hadoop2:3306/flink_test',
+                'connector.table' = 'pvuv_sink',
+                'connector.username' = 'data_work',
+                'connector.password' = 'work123',
+                'connector.write.flush.max-rows' = '1'
+            )
+        "
+        />
+    </bean>
+
+    <bean id="insert_sql" class="com.jeng.flink.config.SQLModel" init-method="init">
+        <property name="sqlNo" value="3"/>
+        <property name="type" value="INSERT"/>
+        <property name="sql" value="
+            INSERT INTO pvuv_sink
+            select
+                DATE_FORMAT(ts, 'yyyy-MM-dd HH:00') as  dt
+                ,count(user_id) as pv
+                ,count(distinct user_id) as uv
+            from user_log
+            group by DATE_FORMAT(ts, 'yyyy-MM-dd HH:00')
+        "
+        />
+    </bean>
+<!--    <bean id="select_sql" class="com.jeng.flink.config.SQLModel" init-method="init">-->
+<!--        <property name="sqlNo" value="4"/>-->
+<!--        <property name="type" value="SELECT"/>-->
+<!--        <property name="sql" value="-->
+<!--            select-->
+<!--                DATE_FORMAT(ts, 'yyyy-MM-dd HH:00') as  dt-->
+<!--                ,count(user_id) as pv-->
+<!--                ,count(distinct user_id) as uv-->
+<!--            from user_log-->
+<!--            group by DATE_FORMAT(ts, 'yyyy-MM-dd HH:00')-->
+<!--        "-->
+<!--        />-->
+<!--    </bean>-->
+</beans>
