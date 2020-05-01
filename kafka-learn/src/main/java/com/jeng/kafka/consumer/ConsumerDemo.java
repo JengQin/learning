@@ -14,7 +14,7 @@ public class ConsumerDemo {
         Properties conf = initConf();
         KafkaConsumer<String, String> consumer = new KafkaConsumer<String, String>(conf, new StringDeserializer(), new StringDeserializer());
 
-        consumer.su
+//        consumer.su
     }
 
     private static Properties initConf() {
