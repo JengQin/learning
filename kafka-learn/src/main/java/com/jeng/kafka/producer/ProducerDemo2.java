@@ -21,7 +21,7 @@ public class ProducerDemo2 {
     public static void main(String[] args) throws InterruptedException {
         Map<String, Object> conf = initConf();
 
-        String topic = "producer_demo_2";
+        String topic = "ooxx";
 
         KafkaProducer<String, String> producer = new KafkaProducer<>(conf, new StringSerializer(), new StringSerializer());
 

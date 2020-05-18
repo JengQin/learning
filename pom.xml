@@ -15,7 +15,8 @@
         <module>spark-learn</module>
         <module>zookeeper-learn</module>
         <module>flink-learn</module>
-        <module>data-producer</module>
+        <module>flume-learn</module>
+        <module>bigdata-project</module>
     </modules>
 
     <properties>
