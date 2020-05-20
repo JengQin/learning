@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 
 
-kafka-console-consumer.sh --bootstrap-server master1:9092 --topic ooxx --from-beginning
+kafka-console-consumer.sh --bootstrap-server node1:9092 --topic src_event_all --from-beginning
 
-kafka-console-producer.sh --broker-list master1:9092 --topic ooxx
-
-
-kafka-consumer-groups.sh --bootstrap-server master1:9092 --list
+kafka-console-producer.sh --broker-list node1:9092 --topic src_event_all
 
 
-kafka-topics.sh --create --zookeeper master1:2181/kafka \
+kafka-consumer-groups.sh --bootstrap-server node1:9092 --list
+
+
+kafka-topics.sh --create --zookeeper node1:2181/kafka \
 --partitions 3 \
 --replication-factor 2 \
 --topic src_event_all \

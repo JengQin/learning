@@ -13,6 +13,6 @@ if [ -f ${PID_FILE} ]; then
 fi
 
 echo 'The program '${JAR_FILE}' starting...'
-nohup java -cp ${JAR_FILE} com.jeng.game.server.Server & PID=$!
+java -cp ${JAR_FILE} com.jeng.game.server.Server & PID=$!
 echo "PID[${PID}]"
 echo ${PID} > ${PID_FILE}

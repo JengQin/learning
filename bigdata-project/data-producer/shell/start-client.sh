@@ -9,4 +9,4 @@ logType=$2
 interval=$3
 
 echo 'The program '${JAR_FILE}' starting...'
-nohup java -cp ${JAR_FILE} com.jeng.game.client.Client -c ${count} -logType ${logType} -i ${interval} &
+java -cp ${JAR_FILE} com.jeng.game.client.Client -c ${count} -logType ${logType} -i ${interval} &

@@ -15,6 +15,7 @@
         <module>flink-cep</module>
         <module>flink-sql</module>
         <module>flink-stream</module>
+        <module>flink-scala</module>
     </modules>
 
     <properties>
