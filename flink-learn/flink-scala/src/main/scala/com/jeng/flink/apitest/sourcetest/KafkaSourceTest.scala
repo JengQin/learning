@@ -17,7 +17,7 @@ object KafkaSourceTest {
     env.setParallelism(3)
 
     val prop = new Properties()
-    prop.put("bootstrap.servers","master1.com:9092,core1.com:9092,core2.com:9092")
+    prop.put("bootstrap.servers","node1:9092,node2:9092,node3:9092")
     prop.put("key.deserializer","org.apache.kafka.common.serialization.StringDeserializer")
     prop.put("value.deserializer","org.apache.kafka.common.serialization.StringDeserializer")
     prop.put("auto.offset.reset","earliest")
