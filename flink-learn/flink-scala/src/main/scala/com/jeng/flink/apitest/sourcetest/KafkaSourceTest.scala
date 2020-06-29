@@ -14,7 +14,7 @@ object KafkaSourceTest {
     2.env.addSource(new FlinkKafkaConsumer011)
      */
     val env = StreamExecutionEnvironment.getExecutionEnvironment
-    env.setParallelism(3)
+//    env.setParallelism(3)
 
     val prop = new Properties()
     prop.put("bootstrap.servers","node1:9092,node2:9092,node3:9092")
