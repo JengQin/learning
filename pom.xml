@@ -18,6 +18,8 @@
         <module>flume-learn</module>
         <module>bigdata-project</module>
         <module>Spring-learn</module>
+        <module>hive-learn</module>
+        <module>calcite-learn</module>
     </modules>
 
     <properties>
