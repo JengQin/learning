@@ -20,6 +20,7 @@
         <module>Spring-learn</module>
         <module>hive-learn</module>
         <module>calcite-learn</module>
+        <module>antlr-learn</module>
     </modules>
 
     <properties>
