@@ -81,7 +81,7 @@ sample_ratio
 
 select_join_step
  :  K_GLOBAL?
-        ( K_ANY | K_ALL ) ( K_INNER | K_LEFT K_OUTER? | K_RIGHT K_OUTER? | K_FULL K_OUTER? ) K_JOIN select_join_right_part
+        ( K_ANY | K_ALL ) ( K_INNER | K_LEFT K_OUTER? | K_RIGHT K_OUTER? | K_FULL K_OUTER? )? K_JOIN select_join_right_part
       ( K_USING LPAREN not_empty_expression_list RPAREN
       | K_USING not_empty_expression_list
       // | K_ON expr  на самом деле нет.
