@@ -8,5 +8,5 @@ import org.apache.spark.sql.Row;
  * @author JiaZheng
  * @create 2020-06-29 22:35
  */
-public class ClickHouseDataReader implements DataReader<Row> {
+public class ClickHouseDataReader /*implements DataReader<Row>*/ {
 }
