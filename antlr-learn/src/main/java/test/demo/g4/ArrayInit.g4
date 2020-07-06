@@ -1,5 +1,9 @@
 grammar ArrayInit;
 
+options{
+    tokenVocab=ArrayInitLexer;
+}
+
 init : '{' value (',' value)* '}'
     ;
 

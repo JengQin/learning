@@ -1,4 +1,4 @@
-// Generated from D:/software_develop/workspace/github_workspace/learning/antlr-learn/clickhouse\ClickHouseLexer.g4 by ANTLR 4.8
+// Generated from D:/software_develop/workspace/github_workspace/learning/antlr-learn/clickhouse\SqlLexer.g4 by ANTLR 4.8
 package clickhouse.parser;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
@@ -185,7 +185,7 @@ public class ClickHouseLexer extends Lexer {
 	}
 
 	@Override
-	public String getGrammarFileName() { return "ClickHouseLexer.g4"; }
+	public String getGrammarFileName() { return "SqlLexer.g4"; }
 
 	@Override
 	public String[] getRuleNames() { return ruleNames; }

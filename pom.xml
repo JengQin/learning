@@ -21,6 +21,7 @@
         <module>hive-learn</module>
         <module>calcite-learn</module>
         <module>antlr-learn</module>
+        <module>datacenter-admin</module>
     </modules>
 
     <properties>
