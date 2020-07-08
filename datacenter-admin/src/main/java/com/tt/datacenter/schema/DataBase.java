@@ -1,13 +1,8 @@
 package com.tt.datacenter.schema;
 
-public class DataBase {
-    private String databaseName;
+public interface DataBase {
 
-    public String getDatabaseName() {
-        return databaseName;
-    }
+    String getDatabaseName();
 
-    public void setDatabaseName(String databaseName) {
-        this.databaseName = databaseName;
-    }
+    void setDatabaseName(String databaseName) ;
 }

@@ -1,10 +1,33 @@
 package com.tt.datacenter.lineage.clickhouse;
 
 import com.tt.datacenter.lineage.TableLineage;
-import com.tt.datacenter.parser.ClickHouseBaseVisitor;
+import com.tt.datacenter.schema.base.Table;
+import org.antlr.v4.runtime.tree.ParseTree;
 
-public class CkTableLineageBuilder extends ClickHouseBaseVisitor<TableLineage> {
+import java.util.List;
 
+/**
+ * 使用Antlr的visitor解析table级别的血缘关系
+ *
+ */
+public class CkTableLineageBuilder{
 
+    /**
+     * 从AST中解析出TableLineage
+     * 每次调用都会生成新的tableLineage
+     *
+     * @param ast
+     * @return 新的tableLineage
+     */
+    public TableLineage build(ParseTree ast) {
+
+        // 遍历ast，获取所有的sourceTable和targetTable
+        SourceAndTargetTableVisitor visitor = new SourceAndTargetTableVisitor();
+        ast.accept(visitor);
+
+        List<Table> targetTables = visitor.getTargetTables();
+        List<Table> sourceTables = visitor.getSourceTables();
+        return new TableLineage(targetTables, sourceTables);
+    }
 
 }

@@ -47,12 +47,9 @@ statement
          (COMMENT string)?
          (WITH properties)?                                            #createTable
     | DROP TABLE (IF EXISTS)? qualifiedName                            #dropTable
-//    | INSERT INTO qualifiedName columnAliases? query                   #insertInto
-    | INSERT INTO targetTable columnAliases? query                      #insertInto  //使用targetTable代替qualifiedName
-//    | DELETE FROM qualifiedName (WHERE booleanExpression)?             #delete
-    | DELETE FROM targetTable (WHERE booleanExpression)?                #delete     //使用targetTable代替qualifiedName
-//    | ALTER TABLE from=qualifiedName RENAME TO to=qualifiedName        #renameTable
-    | ALTER TABLE from=targetTable RENAME TO to=targetTable             #renameTable    //使用targetTable代替qualifiedName
+    | INSERT INTO qualifiedName columnAliases? query                   #insertInto
+    | DELETE FROM qualifiedName (WHERE booleanExpression)?             #delete
+    | ALTER TABLE from=qualifiedName RENAME TO to=qualifiedName        #renameTable
     | ALTER TABLE tableName=qualifiedName
         RENAME COLUMN from=identifier TO to=identifier                 #renameColumn
     | ALTER TABLE tableName=qualifiedName
@@ -217,7 +214,7 @@ queryNoWith:
 
 queryTerm
     : queryPrimary                                                             #queryTermDefault
-    | left=queryTerm operator=INTERSECT setQuantifier? right=queryTerm         #setOperation    //INTERSECT取交集，union取并集，EXCEPT取差集
+    | left=queryTerm operator=INTERSECT setQuantifier? right=queryTerm         #setOperation
     | left=queryTerm operator=(UNION | EXCEPT) setQuantifier? right=queryTerm  #setOperation
     ;
 
@@ -232,7 +229,6 @@ sortItem
     : expression ordering=(ASC | DESC)? (NULLS nullOrdering=(FIRST | LAST))?
     ;
 
-//  每一个select表示开始一个新的临时表
 querySpecification
     : SELECT setQuantifier? selectItem (',' selectItem)*
       (FROM relation (',' relation)*)?
@@ -268,17 +264,15 @@ setQuantifier
 
 selectItem
     : expression (AS? identifier)?  #selectSingle
-//    : selectExpression (AS? identifier)?  #selectSingle
     | qualifiedName '.' ASTERISK    #selectAll
     | ASTERISK                      #selectAll
     ;
 
 relation
     : left=relation
-      (
-      CROSS JOIN right=sampledRelation                              // 笛卡尔积，不带on条件
-      | joinType JOIN rightRelation=relation joinCriteria           // 带on条件的join
-      | NATURAL joinType JOIN right=sampledRelation                 // 自然连接，默认是按照相同名称相同类型的列进行join，所以也不带on条件
+      ( CROSS JOIN right=sampledRelation
+      | joinType JOIN rightRelation=relation joinCriteria
+      | NATURAL joinType JOIN right=sampledRelation
       )                                           #joinRelation
     | sampledRelation                             #relationDefault
     ;
@@ -297,7 +291,7 @@ joinCriteria
 
 sampledRelation
     : aliasedRelation (
-        TABLESAMPLE sampleType '(' percentage=expression ')'    //TABLESAMPLE 抽样，
+        TABLESAMPLE sampleType '(' percentage=expression ')'
       )?
     ;
 
@@ -314,33 +308,13 @@ columnAliases
     : '(' identifier (',' identifier)* ')'
     ;
 
-relationPrimary                 // from的最终子句
-    : sourceTable                                                   #tableName
+relationPrimary
+    : qualifiedName                                                   #tableName
     | '(' query ')'                                                   #subqueryRelation
     | UNNEST '(' expression (',' expression)* ')' (WITH ORDINALITY)?  #unnest
     | LATERAL '(' query ')'                                           #lateral
     | '(' relation ')'                                                #parenthesizedRelation
     ;
-//----------
-// 来源表
-sourceTable
-    : (databaseName '.')? sourceTableName
-    ;
-databaseName:       // DB名称
-    identifier
-    ;
-sourceTableName:    //table名称
-    identifier
-    ;
-
-// 目标表
-targetTable:
-    (databaseName '.')? targetTableName
-    ;
-targetTableName:    //table名称
-    identifier
-    ;
-//============
 
 expression
     : booleanExpression
@@ -598,203 +572,202 @@ nonReserved
     | ZONE
     ;
 
-ADD:	A D D ;
-ADMIN:	A D M I N ;
-ALL:	A L L ;
-ALTER:	A L T E R ;
-ANALYZE:	A N A L Y Z E ;
-AND:	A N D ;
-ANY:	A N Y ;
-ARRAY:	A R R A Y ;
-AS:	A S ;
-ASC:	A S C ;
-AT:	A T ;
-BERNOULLI:	B E R N O U L L I ;
-BETWEEN:	B E T W E E N ;
-BY:	B Y ;
-CALL:	C A L L ;
-CALLED:	C A L L E D ;
-CASCADE:	C A S C A D E ;
-CASE:	C A S E ;
-CAST:	C A S T ;
-CATALOGS:	C A T A L O G S ;
-COLUMN:	C O L U M N ;
-COLUMNS:	C O L U M N S ;
-COMMENT:	C O M M E N T ;
-COMMIT:	C O M M I T ;
-COMMITTED:	C O M M I T T E D ;
-CONSTRAINT:	C O N S T R A I N T ;
-CREATE:	C R E A T E ;
-CROSS:	C R O S S ;
-CUBE:	C U B E ;
-CURRENT:	C U R R E N T ;
-CURRENT_DATE:	C U R R E N T UNDERLINE D A T E ;
-CURRENT_ROLE:	C U R R E N T UNDERLINE R O L E ;
-CURRENT_TIME:	C U R R E N T UNDERLINE T I M E ;
-CURRENT_TIMESTAMP:	C U R R E N T UNDERLINE T I M E S T A M P ;
-CURRENT_USER:	C U R R E N T UNDERLINE U S E R ;
-DATA:	D A T A ;
-DATE:	D A T E ;
-DAY:	D A Y ;
-DEALLOCATE:	D E A L L O C A T E ;
-DELETE:	D E L E T E ;
-DESC:	D E S C ;
-DESCRIBE:	D E S C R I B E ;
-DETERMINISTIC:	D E T E R M I N I S T I C ;
-DISTINCT:	D I S T I N C T ;
-DISTRIBUTED:	D I S T R I B U T E D ;
-DROP:	D R O P ;
-ELSE:	E L S E ;
-END:	E N D ;
-ESCAPE:	E S C A P E ;
-EXCEPT:	E X C E P T ;
-EXCLUDING:	E X C L U D I N G ;
-EXECUTE:	E X E C U T E ;
-EXISTS:	E X I S T S ;
-EXPLAIN:	E X P L A I N ;
-EXTRACT:	E X T R A C T ;
-EXTERNAL:	E X T E R N A L ;
-FALSE:	F A L S E ;
-FILTER:	F I L T E R ;
-FIRST:	F I R S T ;
-FOLLOWING:	F O L L O W I N G ;
-FOR:	F O R ;
-FORMAT:	F O R M A T ;
-FROM:	F R O M ;
-FULL:	F U L L ;
-FUNCTION:	F U N C T I O N ;
-FUNCTIONS:	F U N C T I O N S ;
-GRANT:	G R A N T ;
-GRANTED:	G R A N T E D ;
-GRANTS:	G R A N T S ;
-GRAPHVIZ:	G R A P H V I Z ;
-GROUP:	G R O U P ;
-GROUPING:	G R O U P I N G ;
-HAVING:	H A V I N G ;
-HOUR:	H O U R ;
-IF:	I F ;
-IGNORE:	I G N O R E ;
-IN:	I N ;
-INCLUDING:	I N C L U D I N G ;
-INNER:	I N N E R ;
-INPUT:	I N P U T ;
-INSERT:	I N S E R T ;
-INTERSECT:	I N T E R S E C T ;
-INTERVAL:	I N T E R V A L ;
-INTO:	I N T O ;
-IO:	I O ;
-IS:	I S ;
-ISOLATION:	I S O L A T I O N ;
-JSON:	J S O N ;
-JOIN:	J O I N ;
-LANGUAGE:	L A N G U A G E ;
-LAST:	L A S T ;
-LATERAL:	L A T E R A L ;
-LEFT:	L E F T ;
-LEVEL:	L E V E L ;
-LIKE:	L I K E ;
-LIMIT:	L I M I T ;
-LOCALTIME:	L O C A L T I M E ;
-LOCALTIMESTAMP:	L O C A L T I M E S T A M P ;
-LOGICAL:	L O G I C A L ;
-MAP:	M A P ;
-MINUTE:	M I N U T E ;
-MONTH:	M O N T H ;
-NAME:	N A M E ;
-NATURAL:	N A T U R A L ;
-NFC :	N F C ;
-NFD :	N F D ;
-NFKC :	N F K C ;
-NFKD :	N F K D ;
-NO:	N O ;
-NONE:	N O N E ;
-NORMALIZE:	N O R M A L I Z E ;
-NOT:	N O T ;
-NULL:	N U L L ;
-NULLIF:	N U L L I F ;
-NULLS:	N U L L S ;
-ON:	O N ;
-ONLY:	O N L Y ;
-OPTION:	O P T I O N ;
-OR:	O R ;
-ORDER:	O R D E R ;
-ORDINALITY:	O R D I N A L I T Y ;
-OUTER:	O U T E R ;
-OUTPUT:	O U T P U T ;
-OVER:	O V E R ;
-PARTITION:	P A R T I T I O N ;
-PARTITIONS:	P A R T I T I O N S ;
-POSITION:	P O S I T I O N ;
-PRECEDING:	P R E C E D I N G ;
-PREPARE:	P R E P A R E ;
-PRIVILEGES:	P R I V I L E G E S ;
-PROPERTIES:	P R O P E R T I E S ;
-RANGE:	R A N G E ;
-READ:	R E A D ;
-RECURSIVE:	R E C U R S I V E ;
-RENAME:	R E N A M E ;
-REPEATABLE:	R E P E A T A B L E ;
-REPLACE:	R E P L A C E ;
-RESET:	R E S E T ;
-RESPECT:	R E S P E C T ;
-RESTRICT:	R E S T R I C T ;
-RETURN:	R E T U R N ;
-RETURNS:	R E T U R N S ;
-REVOKE:	R E V O K E ;
-RIGHT:	R I G H T ;
-ROLE:	R O L E ;
-ROLES:	R O L E S ;
-ROLLBACK:	R O L L B A C K ;
-ROLLUP:	R O L L U P ;
-ROW:	R O W ;
-ROWS:	R O W S ;
-SCHEMA:	S C H E M A ;
-SCHEMAS:	S C H E M A S ;
-SECOND:	S E C O N D ;
-SELECT:	S E L E C T ;
-SERIALIZABLE:	S E R I A L I Z A B L E ;
-SESSION:	S E S S I O N ;
-SET:	S E T ;
-SETS:	S E T S ;
-SHOW:	S H O W ;
-SOME:	S O M E ;
-SQL:	S Q L ;
-START:	S T A R T ;
-STATS:	S T A T S ;
-SUBSTRING:	S U B S T R I N G ;
-SYSTEM:	S Y S T E M ;
-TABLE:	T A B L E ;
-TABLES:	T A B L E S ;
-TABLESAMPLE:	T A B L E S A M P L E ;
-TEXT:	T E X T ;
-THEN:	T H E N ;
-TIME:	T I M E ;
-TIMESTAMP:	T I M E S T A M P ;
-TO:	T O ;
-TRANSACTION:	T R A N S A C T I O N ;
-TRUE:	T R U E ;
-TRY_CAST:	T R Y UNDERLINE C A S T ;
-TYPE:	T Y P E ;
-UESCAPE:	U E S C A P E ;
-UNBOUNDED:	U N B O U N D E D ;
-UNCOMMITTED:	U N C O M M I T T E D ;
-UNION:	U N I O N ;
-UNNEST:	U N N E S T ;
-USE:	U S E ;
-USER:	U S E R ;
-USING:	U S I N G ;
-VALIDATE:	V A L I D A T E ;
-VALUES:	V A L U E S ;
-VERBOSE:	V E R B O S E ;
-VIEW:	V I E W ;
-WHEN:	W H E N ;
-WHERE:	W H E R E ;
-WITH:	W I T H ;
-WORK:	W O R K ;
-WRITE:	W R I T E ;
-YEAR:	Y E A R ;
-ZONE:	Z O N E ;
-
+ADD: 'ADD';
+ADMIN: 'ADMIN';
+ALL: 'ALL';
+ALTER: 'ALTER';
+ANALYZE: 'ANALYZE';
+AND: 'AND';
+ANY: 'ANY';
+ARRAY: 'ARRAY';
+AS: 'AS';
+ASC: 'ASC';
+AT: 'AT';
+BERNOULLI: 'BERNOULLI';
+BETWEEN: 'BETWEEN';
+BY: 'BY';
+CALL: 'CALL';
+CALLED: 'CALLED';
+CASCADE: 'CASCADE';
+CASE: 'CASE';
+CAST: 'CAST';
+CATALOGS: 'CATALOGS';
+COLUMN: 'COLUMN';
+COLUMNS: 'COLUMNS';
+COMMENT: 'COMMENT';
+COMMIT: 'COMMIT';
+COMMITTED: 'COMMITTED';
+CONSTRAINT: 'CONSTRAINT';
+CREATE: 'CREATE';
+CROSS: 'CROSS';
+CUBE: 'CUBE';
+CURRENT: 'CURRENT';
+CURRENT_DATE: 'CURRENT_DATE';
+CURRENT_ROLE: 'CURRENT_ROLE';
+CURRENT_TIME: 'CURRENT_TIME';
+CURRENT_TIMESTAMP: 'CURRENT_TIMESTAMP';
+CURRENT_USER: 'CURRENT_USER';
+DATA: 'DATA';
+DATE: 'DATE';
+DAY: 'DAY';
+DEALLOCATE: 'DEALLOCATE';
+DELETE: 'DELETE';
+DESC: 'DESC';
+DESCRIBE: 'DESCRIBE';
+DETERMINISTIC: 'DETERMINISTIC';
+DISTINCT: 'DISTINCT';
+DISTRIBUTED: 'DISTRIBUTED';
+DROP: 'DROP';
+ELSE: 'ELSE';
+END: 'END';
+ESCAPE: 'ESCAPE';
+EXCEPT: 'EXCEPT';
+EXCLUDING: 'EXCLUDING';
+EXECUTE: 'EXECUTE';
+EXISTS: 'EXISTS';
+EXPLAIN: 'EXPLAIN';
+EXTRACT: 'EXTRACT';
+EXTERNAL: 'EXTERNAL';
+FALSE: 'FALSE';
+FILTER: 'FILTER';
+FIRST: 'FIRST';
+FOLLOWING: 'FOLLOWING';
+FOR: 'FOR';
+FORMAT: 'FORMAT';
+FROM: 'FROM';
+FULL: 'FULL';
+FUNCTION: 'FUNCTION';
+FUNCTIONS: 'FUNCTIONS';
+GRANT: 'GRANT';
+GRANTED: 'GRANTED';
+GRANTS: 'GRANTS';
+GRAPHVIZ: 'GRAPHVIZ';
+GROUP: 'GROUP';
+GROUPING: 'GROUPING';
+HAVING: 'HAVING';
+HOUR: 'HOUR';
+IF: 'IF';
+IGNORE: 'IGNORE';
+IN: 'IN';
+INCLUDING: 'INCLUDING';
+INNER: 'INNER';
+INPUT: 'INPUT';
+INSERT: 'INSERT';
+INTERSECT: 'INTERSECT';
+INTERVAL: 'INTERVAL';
+INTO: 'INTO';
+IO: 'IO';
+IS: 'IS';
+ISOLATION: 'ISOLATION';
+JSON: 'JSON';
+JOIN: 'JOIN';
+LANGUAGE: 'LANGUAGE';
+LAST: 'LAST';
+LATERAL: 'LATERAL';
+LEFT: 'LEFT';
+LEVEL: 'LEVEL';
+LIKE: 'LIKE';
+LIMIT: 'LIMIT';
+LOCALTIME: 'LOCALTIME';
+LOCALTIMESTAMP: 'LOCALTIMESTAMP';
+LOGICAL: 'LOGICAL';
+MAP: 'MAP';
+MINUTE: 'MINUTE';
+MONTH: 'MONTH';
+NAME: 'NAME';
+NATURAL: 'NATURAL';
+NFC : 'NFC';
+NFD : 'NFD';
+NFKC : 'NFKC';
+NFKD : 'NFKD';
+NO: 'NO';
+NONE: 'NONE';
+NORMALIZE: 'NORMALIZE';
+NOT: 'NOT';
+NULL: 'NULL';
+NULLIF: 'NULLIF';
+NULLS: 'NULLS';
+ON: 'ON';
+ONLY: 'ONLY';
+OPTION: 'OPTION';
+OR: 'OR';
+ORDER: 'ORDER';
+ORDINALITY: 'ORDINALITY';
+OUTER: 'OUTER';
+OUTPUT: 'OUTPUT';
+OVER: 'OVER';
+PARTITION: 'PARTITION';
+PARTITIONS: 'PARTITIONS';
+POSITION: 'POSITION';
+PRECEDING: 'PRECEDING';
+PREPARE: 'PREPARE';
+PRIVILEGES: 'PRIVILEGES';
+PROPERTIES: 'PROPERTIES';
+RANGE: 'RANGE';
+READ: 'READ';
+RECURSIVE: 'RECURSIVE';
+RENAME: 'RENAME';
+REPEATABLE: 'REPEATABLE';
+REPLACE: 'REPLACE';
+RESET: 'RESET';
+RESPECT: 'RESPECT';
+RESTRICT: 'RESTRICT';
+RETURN: 'RETURN';
+RETURNS: 'RETURNS';
+REVOKE: 'REVOKE';
+RIGHT: 'RIGHT';
+ROLE: 'ROLE';
+ROLES: 'ROLES';
+ROLLBACK: 'ROLLBACK';
+ROLLUP: 'ROLLUP';
+ROW: 'ROW';
+ROWS: 'ROWS';
+SCHEMA: 'SCHEMA';
+SCHEMAS: 'SCHEMAS';
+SECOND: 'SECOND';
+SELECT: 'SELECT';
+SERIALIZABLE: 'SERIALIZABLE';
+SESSION: 'SESSION';
+SET: 'SET';
+SETS: 'SETS';
+SHOW: 'SHOW';
+SOME: 'SOME';
+SQL: 'SQL';
+START: 'START';
+STATS: 'STATS';
+SUBSTRING: 'SUBSTRING';
+SYSTEM: 'SYSTEM';
+TABLE: 'TABLE';
+TABLES: 'TABLES';
+TABLESAMPLE: 'TABLESAMPLE';
+TEXT: 'TEXT';
+THEN: 'THEN';
+TIME: 'TIME';
+TIMESTAMP: 'TIMESTAMP';
+TO: 'TO';
+TRANSACTION: 'TRANSACTION';
+TRUE: 'TRUE';
+TRY_CAST: 'TRY_CAST';
+TYPE: 'TYPE';
+UESCAPE: 'UESCAPE';
+UNBOUNDED: 'UNBOUNDED';
+UNCOMMITTED: 'UNCOMMITTED';
+UNION: 'UNION';
+UNNEST: 'UNNEST';
+USE: 'USE';
+USER: 'USER';
+USING: 'USING';
+VALIDATE: 'VALIDATE';
+VALUES: 'VALUES';
+VERBOSE: 'VERBOSE';
+VIEW: 'VIEW';
+WHEN: 'WHEN';
+WHERE: 'WHERE';
+WITH: 'WITH';
+WORK: 'WORK';
+WRITE: 'WRITE';
+YEAR: 'YEAR';
+ZONE: 'ZONE';
 
 EQ  : '=';
 NEQ : '<>' | '!=';
@@ -876,37 +849,8 @@ fragment DIGIT
     ;
 
 fragment LETTER
-    : [A-Za-z]
+    : [A-Z]
     ;
-
-fragment UNDERLINE:	 '_';
-
-fragment A : [aA];
-fragment B : [bB];
-fragment C : [cC];
-fragment D : [dD];
-fragment E : [eE];
-fragment F : [fF];
-fragment G : [gG];
-fragment H : [hH];
-fragment I : [iI];
-fragment J : [jJ];
-fragment K : [kK];
-fragment L : [lL];
-fragment M : [mM];
-fragment N : [nN];
-fragment O : [oO];
-fragment P : [pP];
-fragment Q : [qQ];
-fragment R : [rR];
-fragment S : [sS];
-fragment T : [tT];
-fragment U : [uU];
-fragment V : [vV];
-fragment W : [wW];
-fragment X : [xX];
-fragment Y : [yY];
-fragment Z : [zZ];
 
 SIMPLE_COMMENT
     : '--' ~[\r\n]* '\r'? '\n'? -> channel(HIDDEN)
@@ -915,6 +859,8 @@ SIMPLE_COMMENT
 BRACKETED_COMMENT
     : '/*' .*? '*/' -> channel(HIDDEN)
     ;
+
+fragment UNDERLINE: '_';
 
 WS
     : [ \r\n\t]+ -> channel(HIDDEN)

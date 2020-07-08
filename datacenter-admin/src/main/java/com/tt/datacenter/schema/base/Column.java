@@ -1,7 +1,6 @@
 package com.tt.datacenter.schema.base;
 
 import com.tt.datacenter.schema.BaseColumn;
-import com.tt.datacenter.schema.BaseTable;
 
 public class Column implements BaseColumn {
     // 列名
@@ -11,7 +10,7 @@ public class Column implements BaseColumn {
     // column的表达式
     private String columnExpr;
     // column所在的表
-    private BaseTable table;
+    private Table table;
     // column的数据类型
     private String dataType;
 
@@ -31,7 +30,7 @@ public class Column implements BaseColumn {
     }
 
     @Override
-    public BaseTable getTable() {
+    public Table getTable() {
         return table;
     }
 
