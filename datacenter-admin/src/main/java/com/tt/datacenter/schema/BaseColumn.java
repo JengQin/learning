@@ -1,5 +1,7 @@
 package com.tt.datacenter.schema;
 
+import com.tt.datacenter.schema.base.Expression;
+
 public interface BaseColumn {
 
     /**
@@ -18,7 +20,7 @@ public interface BaseColumn {
      * 获取column的生成公式
      * @return column的生成公式
      */
-    String getColumnExpr();
+    Expression getColumnExpr();
 
     /**
      * 返货column所在的table

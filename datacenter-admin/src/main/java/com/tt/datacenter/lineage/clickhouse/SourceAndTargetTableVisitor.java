@@ -1,8 +1,9 @@
 package com.tt.datacenter.lineage.clickhouse;
 
+import com.tt.datacenter.lineage.lib.TargetTable;
+import com.tt.datacenter.lineage.lib.SourceTable;
 import com.tt.datacenter.parser.SqlBaseBaseVisitor;
 import com.tt.datacenter.parser.SqlBaseParser;
-import com.tt.datacenter.schema.base.Table;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.ArrayList;
@@ -13,9 +14,9 @@ import java.util.List;
  */
 class SourceAndTargetTableVisitor extends SqlBaseBaseVisitor<Object> {
 
-    private final List<Table> sourceTables = new ArrayList<>();
+    private final List<SourceTable> sourceTables = new ArrayList<>();
 
-    private final List<Table> targetTables = new ArrayList<>();
+    private final List<TargetTable> targetTables = new ArrayList<>();
 
     /**
      * 获取sourceTable
@@ -27,7 +28,7 @@ class SourceAndTargetTableVisitor extends SqlBaseBaseVisitor<Object> {
     public Object visitSourceTable(SqlBaseParser.SourceTableContext ctx) {
         // 获取table name
         String tableName = ctx.sourceTableName().getText();
-        Table sourceTable = new Table(tableName);
+        SourceTable sourceTable = new SourceTable(tableName);
 
         // 获取数据库名
         SqlBaseParser.DatabaseNameContext databaseNameContext = ctx.databaseName();
@@ -64,7 +65,7 @@ class SourceAndTargetTableVisitor extends SqlBaseBaseVisitor<Object> {
 
         // 获取表名
         String tableName = targetTableContext.targetTableName().getText();
-        Table targetTable = new Table(tableName);
+        TargetTable targetTable = new TargetTable(tableName);
 
         // 获取数据库名称
         SqlBaseParser.DatabaseNameContext databaseNameContext = targetTableContext.databaseName();
@@ -80,11 +81,11 @@ class SourceAndTargetTableVisitor extends SqlBaseBaseVisitor<Object> {
         return null;
     }
 
-    public List<Table> getSourceTables() {
+    public List<SourceTable> getSourceTables() {
         return sourceTables;
     }
 
-    public List<Table> getTargetTables() {
+    public List<TargetTable> getTargetTables() {
         return targetTables;
     }
 }

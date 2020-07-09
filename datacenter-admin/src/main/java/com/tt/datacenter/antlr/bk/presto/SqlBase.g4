@@ -258,7 +258,8 @@ groupingSet
     ;
 
 namedQuery
-    : name=identifier (columnAliases)? AS '(' query ')'
+//    : name=identifier (columnAliases)? AS '(' query ')'
+    : '(' query ')' AS name=identifier (columnAliases)?
     ;
 
 setQuantifier
@@ -284,10 +285,18 @@ relation
     ;
 
 joinType
-    : INNER?
-    | LEFT OUTER?
-    | RIGHT OUTER?
-    | FULL OUTER?
+//    : INNER?
+//    | LEFT OUTER?
+//    | RIGHT OUTER?
+//    | FULL OUTER?
+    : GLOBAL?
+        (
+        INNER?
+        | LEFT ( OUTER | SEMI | ANTI )?
+        | RIGHT ( OUTER | SEMI | ANTI )?
+        | FULL ( OUTER | SEMI | ANTI )?
+        | CROSS?
+        )
     ;
 
 joinCriteria
@@ -359,7 +368,8 @@ predicate[ParserRuleContext value]
     | comparisonOperator comparisonQuantifier '(' query ')'               #quantifiedComparison
     | NOT? BETWEEN lower=valueExpression AND upper=valueExpression        #between
     | NOT? IN '(' expression (',' expression)* ')'                        #inList
-    | NOT? IN '(' query ')'                                               #inSubquery
+//    | NOT? IN '(' query ')'                                               #inSubquery
+    | GLOBAL? NOT? IN '(' query ')'                                       #inSubquery
     | NOT? LIKE pattern=valueExpression (ESCAPE escape=valueExpression)?  #like
     | IS NOT? NULL                                                        #nullPredicate
     | IS NOT? DISTINCT FROM right=valueExpression                         #distinctFrom
@@ -597,6 +607,10 @@ nonReserved
     | YEAR
     | ZONE
     ;
+
+GLOBAL: G L O B A L; // global
+SEMI: S E M I; // semi
+ANTI: A N T I; // anti
 
 ADD:	A D D ;
 ADMIN:	A D M I N ;

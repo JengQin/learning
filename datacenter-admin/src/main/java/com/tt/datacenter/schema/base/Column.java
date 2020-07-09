@@ -8,7 +8,7 @@ public class Column implements BaseColumn {
     // column的别名
     private String alias;
     // column的表达式
-    private String columnExpr;
+    private Expression columnExpr;
     // column所在的表
     private Table table;
     // column的数据类型
@@ -25,7 +25,7 @@ public class Column implements BaseColumn {
     }
 
     @Override
-    public String getColumnExpr() {
+    public Expression getColumnExpr() {
         return columnExpr;
     }
 

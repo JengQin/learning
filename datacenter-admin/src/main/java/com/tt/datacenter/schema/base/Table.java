@@ -1,20 +1,15 @@
 package com.tt.datacenter.schema.base;
 
-import com.tt.datacenter.schema.BaseColumn;
 import com.tt.datacenter.schema.BaseTable;
-
-import java.util.List;
-
-import static com.tt.datacenter.schema.base.DataBase.DEFAULT_DATABASE;
 
 public class Table implements BaseTable {
     private String dbName;
     private String tableName;
     private String alias;
-    private List<BaseColumn> columns;
+    private Schema columnSchema;
 
     public Table(String tableName) {
-        this(DEFAULT_DATABASE,tableName);
+        this(DataBase.DEFAULT_DATABASE,tableName);
     }
 
     public Table(String dbName, String tableName) {
@@ -25,11 +20,11 @@ public class Table implements BaseTable {
         this(dbName, tableName, alias, null);
     }
 
-    public Table(String dbName, String tableName, String alias, List<BaseColumn> columns) {
+    public Table(String dbName, String tableName, String alias, Schema columnSchema) {
         this.dbName = dbName;
         this.tableName = tableName;
         this.alias = alias;
-        this.columns = columns;
+        this.columnSchema = columnSchema;
     }
 
     @Override
@@ -48,8 +43,8 @@ public class Table implements BaseTable {
     }
 
     @Override
-    public List<BaseColumn> getColumns() {
-        return columns;
+    public Schema getColumns() {
+        return columnSchema;
     }
 
     @Override

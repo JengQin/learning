@@ -1,5 +1,7 @@
 package com.tt.datacenter.schema;
 
+import com.tt.datacenter.schema.base.Schema;
+
 import java.util.List;
 
 public interface BaseTable {
@@ -29,5 +31,5 @@ public interface BaseTable {
      *
      * @return table的所有column
      */
-    List<BaseColumn> getColumns();
+    Schema getColumns();
 }

@@ -1,6 +1,8 @@
 package com.tt.datacenter.lineage.clickhouse;
 
 import com.tt.datacenter.lineage.TableLineage;
+import com.tt.datacenter.lineage.lib.SourceTable;
+import com.tt.datacenter.lineage.lib.TargetTable;
 import com.tt.datacenter.schema.base.Table;
 import org.antlr.v4.runtime.tree.ParseTree;
 
@@ -25,8 +27,8 @@ public class CkTableLineageBuilder{
         SourceAndTargetTableVisitor visitor = new SourceAndTargetTableVisitor();
         ast.accept(visitor);
 
-        List<Table> targetTables = visitor.getTargetTables();
-        List<Table> sourceTables = visitor.getSourceTables();
+        List<TargetTable> targetTables = visitor.getTargetTables();
+        List<SourceTable> sourceTables = visitor.getSourceTables();
         return new TableLineage(targetTables, sourceTables);
     }
 
