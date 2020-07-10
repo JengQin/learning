@@ -1,9 +1,8 @@
 package com.tt.datacenter.lineage.clickhouse;
 
-import com.tt.datacenter.lineage.TableLineage;
-import com.tt.datacenter.lineage.lib.SourceTable;
-import com.tt.datacenter.lineage.lib.TargetTable;
-import com.tt.datacenter.schema.base.Table;
+import com.tt.datacenter.lineage.lib.table.TableLineage;
+import com.tt.datacenter.lineage.lib.table.SourceTable;
+import com.tt.datacenter.lineage.lib.table.TargetTable;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.util.List;

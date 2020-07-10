@@ -1,7 +1,7 @@
 package com.tt.datacenter.lineage.clickhouse;
 
-import com.tt.datacenter.lineage.lib.TargetTable;
-import com.tt.datacenter.lineage.lib.SourceTable;
+import com.tt.datacenter.lineage.lib.table.TargetTable;
+import com.tt.datacenter.lineage.lib.table.SourceTable;
 import com.tt.datacenter.parser.SqlBaseBaseVisitor;
 import com.tt.datacenter.parser.SqlBaseParser;
 import org.antlr.v4.runtime.ParserRuleContext;

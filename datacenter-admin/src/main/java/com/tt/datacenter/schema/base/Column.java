@@ -5,28 +5,26 @@ import com.tt.datacenter.schema.BaseColumn;
 public class Column implements BaseColumn {
     // 列名
     private String columnName;
-    // column的别名
-    private String alias;
-    // column的表达式
-    private Expression columnExpr;
     // column所在的表
     private Table table;
     // column的数据类型
     private String dataType;
 
+    public void setColumnName(String columnName) {
+        this.columnName = columnName;
+    }
+
+    public void setTable(Table table) {
+        this.table = table;
+    }
+
+    public void setDataType(String dataType) {
+        this.dataType = dataType;
+    }
+
     @Override
     public String getName() {
         return columnName;
-    }
-
-    @Override
-    public String getAlias() {
-        return alias;
-    }
-
-    @Override
-    public Expression getColumnExpr() {
-        return columnExpr;
     }
 
     @Override
@@ -36,6 +34,6 @@ public class Column implements BaseColumn {
 
     @Override
     public String getDataType() {
-        return null;
+        return dataType;
     }
 }

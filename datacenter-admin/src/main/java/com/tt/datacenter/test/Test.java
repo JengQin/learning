@@ -1,10 +1,10 @@
 package com.tt.datacenter.test;
 
 
-import com.tt.datacenter.lineage.TableLineage;
+import com.tt.datacenter.lineage.lib.table.TableLineage;
 import com.tt.datacenter.lineage.clickhouse.CkTableLineageBuilder;
 import com.tt.datacenter.lineage.clickhouse.SelectQueryVisitor;
-import com.tt.datacenter.lineage.lib.SourceTable;
+import com.tt.datacenter.lineage.lib.table.SourceTable;
 import com.tt.datacenter.parser.SqlBaseLexer;
 import com.tt.datacenter.parser.SqlBaseParser;
 import com.tt.datacenter.schema.BaseTable;

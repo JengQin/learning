@@ -1,8 +1,4 @@
-package com.tt.datacenter.lineage;
-
-import com.tt.datacenter.lineage.lib.SourceTable;
-import com.tt.datacenter.lineage.lib.TargetTable;
-import com.tt.datacenter.schema.base.Table;
+package com.tt.datacenter.lineage.lib.table;
 
 import java.util.ArrayList;
 import java.util.List;

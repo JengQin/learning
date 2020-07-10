@@ -217,8 +217,11 @@ queryNoWith:
 
 queryTerm
     : queryPrimary                                                             #queryTermDefault
-    | left=queryTerm operator=INTERSECT setQuantifier? right=queryTerm         #setOperation    //INTERSECT取交集，union取并集，EXCEPT取差集
-    | left=queryTerm operator=(UNION | EXCEPT) setQuantifier? right=queryTerm  #setOperation
+//    | left=queryTerm operator=INTERSECT setQuantifier? right=queryTerm         #setOperation    //INTERSECT取交集，union取并集，EXCEPT取差集
+//    | left=queryTerm operator=(UNION | EXCEPT) setQuantifier? right=queryTerm  #setOperation
+    | queryPrimary
+       (UNION | EXCEPT | INTERSECT) setQuantifier? queryPrimary
+       ( (UNION | EXCEPT | INTERSECT) setQuantifier? queryPrimary )*  #setOperation //INTERSECT取交集，union取并集，EXCEPT取差集
     ;
 
 queryPrimary
