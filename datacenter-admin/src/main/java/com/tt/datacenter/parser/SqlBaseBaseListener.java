@@ -1024,6 +1024,18 @@ public class SqlBaseBaseListener implements SqlBaseListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterWhereClause(SqlBaseParser.WhereClauseContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitWhereClause(SqlBaseParser.WhereClauseContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterGroupBy(SqlBaseParser.GroupByContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -1216,25 +1228,13 @@ public class SqlBaseBaseListener implements SqlBaseListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterAliasedRelation(SqlBaseParser.AliasedRelationContext ctx) { }
+	@Override public void enterAliasedRelationDefault(SqlBaseParser.AliasedRelationDefaultContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitAliasedRelation(SqlBaseParser.AliasedRelationContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterColumnAliases(SqlBaseParser.ColumnAliasesContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitColumnAliases(SqlBaseParser.ColumnAliasesContext ctx) { }
+	@Override public void exitAliasedRelationDefault(SqlBaseParser.AliasedRelationDefaultContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -1247,6 +1247,18 @@ public class SqlBaseBaseListener implements SqlBaseListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitTableName(SqlBaseParser.TableNameContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterColumnAliases(SqlBaseParser.ColumnAliasesContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitColumnAliases(SqlBaseParser.ColumnAliasesContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

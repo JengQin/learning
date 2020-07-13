@@ -38,7 +38,7 @@ class SourceAndTargetTableVisitor extends SqlBaseBaseVisitor<Object> {
 
         // 判断是否有别名 aliasedRelation -> relationPrimary -> sourceTable
         ParserRuleContext parent = ctx.getParent().getParent();
-        SqlBaseParser.AliasedRelationContext aliasedRelationContext = (SqlBaseParser.AliasedRelationContext) parent;
+        SqlBaseParser.TableNameContext aliasedRelationContext = (SqlBaseParser.TableNameContext) parent;
         SqlBaseParser.IdentifierContext identifier = aliasedRelationContext.identifier();
         if (null != identifier){
             String tableAlias = identifier.getText();

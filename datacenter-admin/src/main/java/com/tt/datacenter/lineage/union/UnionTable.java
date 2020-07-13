@@ -18,12 +18,12 @@ public class UnionTable extends VirtualTable{
     public void generateColumns() {
         List<VirtualTable> children = getDependencyTable();
         // 获取第一个select结果集的列信息
-        List<VirtualColumn> selectColumns = children.get(0).getColumns();
+        List<VirtualColumn> columnOfChild = children.get(0).getColumns();
 
         // 生成列信息
-        for (VirtualColumn selectColumn : selectColumns) {
-            Integer columnIndex = selectColumn.getColumnIndex();
-            String columnName = selectColumn.getColumnName();
+        for (VirtualColumn column : columnOfChild) {
+            Integer columnIndex = column.getColumnIndex();
+            String columnName = column.getColumnName();
 
             VirtualColumn currentColumn = new VirtualColumn(columnName,columnIndex);
 
@@ -33,9 +33,8 @@ public class UnionTable extends VirtualTable{
                 currentColumn.addDependencyColumns(childColumn);
             }
 
-            // 设置列所属的table
-            currentColumn.setVirtualTable(this);
-            currentColumn.setTableAlias(this.tableAlias);
+            // 加入列信息
+            this.addColumn(currentColumn);
         }
     }
 }

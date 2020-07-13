@@ -239,9 +239,14 @@ sortItem
 querySpecification
     : SELECT setQuantifier? selectItem (',' selectItem)*
       (FROM relation (',' relation)*)?
-      (WHERE where=booleanExpression)?
+//      (WHERE where=booleanExpression)?
+      (whereClause)?
       (GROUP BY groupBy)?
       (HAVING having=booleanExpression)?
+    ;
+
+whereClause:
+    WHERE where=booleanExpression
     ;
 
 groupBy
@@ -319,7 +324,8 @@ sampleType
     ;
 
 aliasedRelation
-    : relationPrimary (AS? identifier columnAliases?)?
+    : relationPrimary (AS? identifier columnAliases?)?      # aliasedRelationDefault
+    | sourceTable (AS? identifier)?                         # tableName // from的最终子句：源表
     ;
 
 columnAliases
@@ -327,8 +333,8 @@ columnAliases
     ;
 
 relationPrimary                 // from的最终子句
-    : sourceTable                                                   #tableName
-    | '(' query ')'                                                   #subqueryRelation
+//    : sourceTable                                                   #tableName
+    : '(' query ')'                                                   #subqueryRelation
     | UNNEST '(' expression (',' expression)* ')' (WITH ORDINALITY)?  #unnest
     | LATERAL '(' query ')'                                           #lateral
     | '(' relation ')'                                                #parenthesizedRelation

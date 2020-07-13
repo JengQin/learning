@@ -574,6 +574,12 @@ public interface SqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitQuerySpecification(SqlBaseParser.QuerySpecificationContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link SqlBaseParser#whereClause}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitWhereClause(SqlBaseParser.WhereClauseContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link SqlBaseParser#groupBy}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -678,24 +684,25 @@ public interface SqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitSampleType(SqlBaseParser.SampleTypeContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link SqlBaseParser#aliasedRelation}.
+	 * Visit a parse tree produced by the {@code aliasedRelationDefault}
+	 * labeled alternative in {@link SqlBaseParser#aliasedRelation}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitAliasedRelation(SqlBaseParser.AliasedRelationContext ctx);
+	T visitAliasedRelationDefault(SqlBaseParser.AliasedRelationDefaultContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code tableName}
+	 * labeled alternative in {@link SqlBaseParser#aliasedRelation}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTableName(SqlBaseParser.TableNameContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link SqlBaseParser#columnAliases}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitColumnAliases(SqlBaseParser.ColumnAliasesContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code tableName}
-	 * labeled alternative in {@link SqlBaseParser#relationPrimary}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitTableName(SqlBaseParser.TableNameContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code subqueryRelation}
 	 * labeled alternative in {@link SqlBaseParser#relationPrimary}.

@@ -966,6 +966,16 @@ public interface SqlBaseListener extends ParseTreeListener {
 	 */
 	void exitQuerySpecification(SqlBaseParser.QuerySpecificationContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link SqlBaseParser#whereClause}.
+	 * @param ctx the parse tree
+	 */
+	void enterWhereClause(SqlBaseParser.WhereClauseContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SqlBaseParser#whereClause}.
+	 * @param ctx the parse tree
+	 */
+	void exitWhereClause(SqlBaseParser.WhereClauseContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link SqlBaseParser#groupBy}.
 	 * @param ctx the parse tree
 	 */
@@ -1142,15 +1152,29 @@ public interface SqlBaseListener extends ParseTreeListener {
 	 */
 	void exitSampleType(SqlBaseParser.SampleTypeContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link SqlBaseParser#aliasedRelation}.
+	 * Enter a parse tree produced by the {@code aliasedRelationDefault}
+	 * labeled alternative in {@link SqlBaseParser#aliasedRelation}.
 	 * @param ctx the parse tree
 	 */
-	void enterAliasedRelation(SqlBaseParser.AliasedRelationContext ctx);
+	void enterAliasedRelationDefault(SqlBaseParser.AliasedRelationDefaultContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link SqlBaseParser#aliasedRelation}.
+	 * Exit a parse tree produced by the {@code aliasedRelationDefault}
+	 * labeled alternative in {@link SqlBaseParser#aliasedRelation}.
 	 * @param ctx the parse tree
 	 */
-	void exitAliasedRelation(SqlBaseParser.AliasedRelationContext ctx);
+	void exitAliasedRelationDefault(SqlBaseParser.AliasedRelationDefaultContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code tableName}
+	 * labeled alternative in {@link SqlBaseParser#aliasedRelation}.
+	 * @param ctx the parse tree
+	 */
+	void enterTableName(SqlBaseParser.TableNameContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code tableName}
+	 * labeled alternative in {@link SqlBaseParser#aliasedRelation}.
+	 * @param ctx the parse tree
+	 */
+	void exitTableName(SqlBaseParser.TableNameContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link SqlBaseParser#columnAliases}.
 	 * @param ctx the parse tree
@@ -1161,18 +1185,6 @@ public interface SqlBaseListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitColumnAliases(SqlBaseParser.ColumnAliasesContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code tableName}
-	 * labeled alternative in {@link SqlBaseParser#relationPrimary}.
-	 * @param ctx the parse tree
-	 */
-	void enterTableName(SqlBaseParser.TableNameContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code tableName}
-	 * labeled alternative in {@link SqlBaseParser#relationPrimary}.
-	 * @param ctx the parse tree
-	 */
-	void exitTableName(SqlBaseParser.TableNameContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code subqueryRelation}
 	 * labeled alternative in {@link SqlBaseParser#relationPrimary}.
