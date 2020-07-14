@@ -1,7 +1,8 @@
 package com.tt.datacenter.lineage.lib.column;
 
+import com.tt.datacenter.lineage.union.TableNode;
 import com.tt.datacenter.lineage.union.VirtualColumn;
-import com.tt.datacenter.lineage.union.VirtualTable;
+import com.tt.datacenter.lineage.union.SelectTableNode;
 
 import java.util.List;
 
@@ -14,7 +15,7 @@ public class ColumnLineageBuilder {
      * @param tableTree
      * @return
      */
-    public ColumnLineage build(VirtualTable tableTree) {
+    public ColumnLineage build(TableNode tableTree) {
         ColumnLineage columnLineage = new ColumnLineage();
         List<VirtualColumn> columns = tableTree.getColumns();
         for (VirtualColumn column : columns) {
@@ -41,7 +42,7 @@ public class ColumnLineageBuilder {
      */
     private void dfsVirtualColumn(VirtualColumn column, TargetColumn targetColumn) {
         // 递归结束条件：如果是sourceTable的列，就加入targetColumn的依赖列
-        if (column.getVirtualTable().getType() == VirtualTable.TableType.SOURCE) {
+        if (column.getVirtualTable().getType() == SelectTableNode.TableType.SOURCE) {
             SourceColumn sourceColumn = new SourceColumn(column.getTableAlias(), column.getVirtualTable().getDbName(), column.getColumnName());
             targetColumn.addSourceColumns(sourceColumn);
             return;

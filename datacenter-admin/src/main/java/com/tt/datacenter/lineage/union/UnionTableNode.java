@@ -5,10 +5,10 @@ import java.util.List;
 /**
  * union集合操作之后的结果表
  */
-public class UnionTable extends VirtualTable{
+public class UnionTableNode extends SelectTableNode {
 
 
-    public UnionTable(TableType type, String tableAlias) {
+    public UnionTableNode(TableType type, String tableAlias) {
         super(type, tableAlias);
     }
 
@@ -16,7 +16,7 @@ public class UnionTable extends VirtualTable{
      * 生成union结果集的列，并处理列的依赖关系
      */
     public void generateColumns() {
-        List<VirtualTable> children = getDependencyTable();
+        List<TableNode> children = getDependencyTable();
         // 获取第一个select结果集的列信息
         List<VirtualColumn> columnOfChild = children.get(0).getColumns();
 
@@ -28,7 +28,7 @@ public class UnionTable extends VirtualTable{
             VirtualColumn currentColumn = new VirtualColumn(columnName,columnIndex);
 
             // 设置列的依赖
-            for (VirtualTable child : children) {
+            for (TableNode child : children) {
                 VirtualColumn childColumn = child.getColumns().get(columnIndex);
                 currentColumn.addDependencyColumns(childColumn);
             }

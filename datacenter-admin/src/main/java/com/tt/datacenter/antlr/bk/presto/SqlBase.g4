@@ -297,7 +297,7 @@ joinType
 //    | LEFT OUTER?
 //    | RIGHT OUTER?
 //    | FULL OUTER?
-    : GLOBAL?
+    : GLOBAL? ( ANY | ALL | ASOF)?
         (
         INNER?
         | LEFT ( OUTER | SEMI | ANTI )?
@@ -406,6 +406,7 @@ primaryExpression
     | POSITION '(' valueExpression IN valueExpression ')'                                 #position
     | '(' expression (',' expression)+ ')'                                                #rowConstructor
     | ROW '(' expression (',' expression)* ')'                                            #rowConstructor
+//    | function                                                                            #functionCall
     | qualifiedName '(' ASTERISK ')' filter? over?                                        #functionCall
     | qualifiedName '(' (setQuantifier? expression (',' expression)*)?
         (ORDER BY sortItem (',' sortItem)*)? ')' filter? (nullTreatment? over)?           #functionCall
@@ -430,10 +431,29 @@ primaryExpression
     | name=CURRENT_USER                                                                   #currentUser
     | SUBSTRING '(' valueExpression FROM valueExpression (FOR valueExpression)? ')'       #substring
     | NORMALIZE '(' valueExpression (',' normalForm)? ')'                                 #normalize
-    | EXTRACT '(' identifier FROM valueExpression ')'                                     #extract
+//    | EXTRACT '(' identifier FROM valueExpression ')'                                     #extract
+    | EXTRACT '(' valueExpression ',' (identifier | string) ')'                           #extract
     | '(' expression ')'                                                                  #parenthesizedExpression
     | GROUPING '(' (qualifiedName (',' qualifiedName)*)? ')'                              #groupingOperation
     ;
+
+//// 函数
+//function
+//    : function_name function_parameters? function_arguments
+//    ;
+//
+//function_parameters
+//    : '(' ( expression ( ',' expression )* )? ')'
+//    ;
+//
+//function_arguments
+//    : '(' ( expression ( ',' expression )* )? ')'
+//    ;
+//
+//function_name:  //函数名
+//    identifier
+//    ;
+
 
 string
     : STRING                                #basicStringLiteral
@@ -620,6 +640,7 @@ nonReserved
 GLOBAL: G L O B A L; // global
 SEMI: S E M I; // semi
 ANTI: A N T I; // anti
+ASOF: A S O F; // ASOF
 
 ADD:	A D D ;
 ADMIN:	A D M I N ;

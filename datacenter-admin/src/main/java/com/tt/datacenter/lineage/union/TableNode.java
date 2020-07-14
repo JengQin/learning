@@ -3,28 +3,19 @@ package com.tt.datacenter.lineage.union;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * 虚表类，对应于查询过程中生成的临时中间表
- */
-public class VirtualTable {
-
+public abstract class TableNode {
     /**
      * 虚表的类型
      */
     public static enum TableType {
-//        FINAL,  // 最终的select结果
+        INSERT_TABLE,   // insert into语句的目标表
         UNION_RESULT,   // union的结果
-//        JOIN_RESULT,    // join的结果
         SELECT_RESULT,  // select的结果
-        SOURCE,         // 来源表
-//        SOURCE_ALIAS    // 给来源表的取别名生成的表，如from dw.tab1 as t1, 其中tab1的是SOURCE，t1是SOURCE_ALIAS
+        SOURCE         // 来源表
     }
 
     // 表的类型
     protected TableType type;
-
-    // 是否是最终的结果
-    protected boolean isFinal = false;
 
     // 临时表名
     protected String tableAlias;
@@ -36,47 +27,51 @@ public class VirtualTable {
     protected List<VirtualColumn> columns = new ArrayList<>();
 
     // 依赖的VirtualTable
-    protected List<VirtualTable> dependencyTable = new ArrayList<>();
+    protected List<TableNode> dependencyTable = new ArrayList<>();
 
     // 上层的父节点，通常情况下只有一个parent，但如果是with子句中的select，有可能会被多个parent引用
-    protected List<VirtualTable> parentTable = new ArrayList<>();
+    protected List<TableNode> parentTable = new ArrayList<>();
 
-    public VirtualTable(TableType type, String tableAlias) {
+    public TableNode(TableType type, String tableAlias) {
         this.type = type;
         this.tableAlias = tableAlias;
     }
 
+    /**
+     * 添加列
+     *
+     * @param column
+     * @return
+     */
+    abstract public boolean addColumn(VirtualColumn column);
 
     /**
-     * 加入依赖的子查询
+     * 加入依赖的子表
      *
      * @param virtualTable
      * @return
      */
-    public boolean addDependencyTable(VirtualTable virtualTable) {
-        return dependencyTable.add(virtualTable);
-    }
+    abstract public boolean addDependencyTable(TableNode virtualTable);
 
     /**
      * 添加parent table
      * @param virtualTable
      * @return
      */
-    public boolean addParentTable(VirtualTable virtualTable) {
-        return parentTable.add(virtualTable);
-    }
-
+    abstract public boolean addParentTable(TableNode virtualTable);
     /**
-     * 加入列信息
-     *
-     * @param column
+     * 获取列的个数
      * @return
      */
-    public boolean addColumn(VirtualColumn column) {
-        column.setVirtualTable(this);
-        column.setTableAlias(tableAlias);
-
-        return columns.add(column);
+    public int getColumnSize() {
+        return columns.size();
+    }
+    /**
+     * 获取指定下标的列
+     * @return
+     */
+    public VirtualColumn getColumnByIndex(int index) {
+        return columns.get(index);
     }
 
     /**
@@ -85,8 +80,8 @@ public class VirtualTable {
      * @param tableAlias
      * @return
      */
-    public VirtualTable findDependencyTableByAlias(String tableAlias) {
-        for (VirtualTable table : dependencyTable) {
+    public TableNode findDependencyTableByAlias(String tableAlias) {
+        for (TableNode table : dependencyTable) {
             if (table.getTableAlias().equals(tableAlias)) {
                 return table;
             }
@@ -116,8 +111,8 @@ public class VirtualTable {
      */
     public VirtualColumn findColumnInAllDependencyTable(String columnName) {
         VirtualColumn column = null;
-        for (VirtualTable table : dependencyTable) {
-            column = table.getColumnByName(columnName);
+        for (TableNode table : dependencyTable) {
+            column = ((SelectTableNode)table).getColumnByName(columnName);
             if (null != column) {
                 return column;
             }
@@ -126,14 +121,17 @@ public class VirtualTable {
         throw new RuntimeException(this.tableAlias + "的所有dependencyTable都没有这个column: " + tableAlias);
     }
 
-    /**
-     * 获取列的个数
-     * @return
-     */
-    public int getColumnSize() {
-        return columns.size();
+    public List<VirtualColumn> getColumns() {
+        return columns;
     }
 
+    public List<TableNode> getDependencyTable() {
+        return dependencyTable;
+    }
+
+    public List<TableNode> getParentTable() {
+        return parentTable;
+    }
 
     public TableType getType() {
         return type;
@@ -151,43 +149,11 @@ public class VirtualTable {
         this.tableAlias = tableAlias;
     }
 
-    public List<VirtualColumn> getColumns() {
-        return columns;
-    }
-
-    public List<VirtualTable> getDependencyTable() {
-        return dependencyTable;
-    }
-
-    public List<VirtualTable> getParentTable() {
-
-        return parentTable;
-    }
-
-    public boolean isFinal() {
-        return isFinal;
-    }
-
-    public void setFinal(boolean aFinal) {
-        isFinal = aFinal;
-    }
-
     public String getDbName() {
         return dbName;
     }
 
     public void setDbName(String dbName) {
         this.dbName = dbName;
-    }
-
-    @Override
-    public String toString() {
-        return "VirtualTable{" +
-                "type=" + type +
-                ", isFinal=" + isFinal +
-                ", tableAlias='" + tableAlias + '\'' +
-                ", columns=" + columns +
-                ", dependencyTable=" + dependencyTable +
-                '}';
     }
 }

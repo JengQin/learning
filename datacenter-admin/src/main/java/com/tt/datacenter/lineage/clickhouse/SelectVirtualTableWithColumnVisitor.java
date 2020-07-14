@@ -1,9 +1,6 @@
 package com.tt.datacenter.lineage.clickhouse;
 
-import com.tt.datacenter.lineage.union.ColumnReference;
-import com.tt.datacenter.lineage.union.VirtualColumn;
-import com.tt.datacenter.lineage.union.VirtualSourceTable;
-import com.tt.datacenter.lineage.union.VirtualTable;
+import com.tt.datacenter.lineage.union.*;
 import com.tt.datacenter.parser.SqlBaseParser;
 import com.tt.datacenter.schema.base.Expression;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -14,7 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-public class VirtualColumnVisitor extends VirtualTableVisitor {
+public class SelectVirtualTableWithColumnVisitor extends SelectVirtualTableVisitor {
 
 
     // 记录当前正在解析的列
@@ -27,12 +24,12 @@ public class VirtualColumnVisitor extends VirtualTableVisitor {
      * @param tree
      * @return
      */
-    public VirtualTable parseTreeToVirtualTable(ParseTree tree) {
+    public SelectTableNode parseTreeToSelectTableTree(ParseTree tree) {
         // 1.生成VirtualTable tree
         visit(tree);
 
         // 找到finalTable
-        VirtualTable finalTable = findFinalTable();
+        SelectTableNode finalTable = findFinalTable();
 
         // 2. 生成SourceTable的列信息
         generateSourceTableColumn();
@@ -45,9 +42,9 @@ public class VirtualColumnVisitor extends VirtualTableVisitor {
 
     }
 
-    private void dfsVirtualTableTree(VirtualTable table) {
+    private void dfsVirtualTableTree(SelectTableNode table) {
         // 递归结束条件
-        if (table.getType() == VirtualTable.TableType.SOURCE) {
+        if (table.getType() == SelectTableNode.TableType.SOURCE) {
             return;
         }
 
@@ -62,8 +59,8 @@ public class VirtualColumnVisitor extends VirtualTableVisitor {
 
 
         // 递归所有的子表
-        for (VirtualTable childTable : table.getDependencyTable()) {
-            dfsVirtualTableTree(childTable);
+        for (TableNode childTable : table.getDependencyTable()) {
+            dfsVirtualTableTree((SelectTableNode) childTable);
         }
     }
 
@@ -74,7 +71,7 @@ public class VirtualColumnVisitor extends VirtualTableVisitor {
      * @param currentTable
      * @param currentColumn
      */
-    private void processColumnDependency(VirtualTable currentTable, VirtualColumn currentColumn) {
+    private void processColumnDependency(SelectTableNode currentTable, VirtualColumn currentColumn) {
         Expression expression = currentColumn.getExpression();
         if (null == expression) {
             return;
@@ -88,8 +85,8 @@ public class VirtualColumnVisitor extends VirtualTableVisitor {
             String columnName = columnRef.getColumnName();
             // 如果columnRef的table不为空，则从指定的table中获取指定columnName的列
             if (StringUtils.isNotBlank(tableName)) {
-                VirtualTable depTable = currentTable.findDependencyTableByAlias(tableName);
-                VirtualColumn depColumn = depTable.getColumnByName(columnName);
+                TableNode depTable = currentTable.findDependencyTableByAlias(tableName);
+                VirtualColumn depColumn = ((SelectTableNode)depTable).getColumnByName(columnName);
                 if (null == depColumn) {
                     throw new RuntimeException(depTable + "中没有这个column: " + columnName);
                 }
@@ -108,10 +105,10 @@ public class VirtualColumnVisitor extends VirtualTableVisitor {
     private void generateSourceTableColumn() {
         Set<String> keySet = visitedTable.keySet();
         for (String tableAlias : keySet) {
-            VirtualTable virtualTable = visitedTable.get(tableAlias);
-            if (virtualTable.getType() == VirtualTable.TableType.SOURCE) {
+            SelectTableNode virtualTable = visitedTable.get(tableAlias);
+            if (virtualTable.getType() == SelectTableNode.TableType.SOURCE) {
                 // 生成列信息
-                ((VirtualSourceTable) virtualTable).generateColumns();
+                ((SourceTableNode) virtualTable).generateColumns();
             }
         }
     }

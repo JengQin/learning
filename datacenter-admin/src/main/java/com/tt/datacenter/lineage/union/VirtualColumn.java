@@ -20,7 +20,7 @@ public class VirtualColumn {
     private List<VirtualColumn> dependencyColumns = new ArrayList<>();
 
     // 所属的VirtualTable
-    private VirtualTable virtualTable;
+    private TableNode virtualTable;
     // VirtualTable的临时表名
     private String tableAlias;
 
@@ -57,11 +57,11 @@ public class VirtualColumn {
         return dependencyColumns;
     }
 
-    public VirtualTable getVirtualTable() {
+    public TableNode getVirtualTable() {
         return virtualTable;
     }
 
-    public void setVirtualTable(VirtualTable virtualTable) {
+    public void setVirtualTable(TableNode virtualTable) {
         this.virtualTable = virtualTable;
     }
 

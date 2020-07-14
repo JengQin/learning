@@ -3,39 +3,31 @@ package com.tt.datacenter.lineage.clickhouse;
 import com.tt.datacenter.lineage.union.*;
 import com.tt.datacenter.parser.SqlBaseBaseVisitor;
 import com.tt.datacenter.parser.SqlBaseParser;
-import com.tt.datacenter.schema.base.Expression;
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 
-public class VirtualTableVisitor extends SqlBaseBaseVisitor<Object> {
+public class SelectVirtualTableVisitor extends SqlBaseBaseVisitor<Object> {
 
     // 使用栈来记录AST的遍历过程，每遇到一个新的临时表就入栈，栈顶元素永远保存着当前正在解析的virtual table
-    protected Deque<VirtualTable> tableStack = new LinkedList<>();
+    protected Deque<SelectTableNode> tableStack = new LinkedList<>();
 
     // 记录已经完成访问的select
-    protected Map<String, VirtualTable> visitedTable = new HashMap<>();
+    protected Map<String, SelectTableNode> visitedTable = new HashMap<>();
 
     // 记录当前正在解析的table的别名
     protected Deque<String> tableAliasStack = new LinkedList<>();
 
-
-    // 记录当前是否是正处于selectSingle解析阶段，只有处于selectSingle阶段才需要解析出列的依赖关系
-    protected boolean isInSelectSingle = false;
-    protected boolean isInWhere = false;
+    protected boolean isInSelectSingle = false;  // 记录当前是否是正处于selectSingle解析阶段，只有处于selectSingle阶段才需要解析出列的依赖关系
+    protected boolean isInWhere = false; // 记录当前是否正处于where子句解析阶段
+    protected boolean isInWith = false; // 记录当前是否正处于with子句阶段
 
     // alias后缀，每调用一次就加1
     private int unionAliasSuffix = 0;
-    private String unionAliasPrefix = "union_virtual_table_";
     private int unionSelectAliasSuffix = 0;
+    private String unionAliasPrefix = "union_virtual_table_";
     private String unionSelectAliasPrefix = "union_select_virtual_table_";
     private String finalSelectVirtualTable = "final_select_virtual_table";
-
-
-
-
 
     /**
      * 获取到新的子查询别名
@@ -99,7 +91,7 @@ public class VirtualTableVisitor extends SqlBaseBaseVisitor<Object> {
             pushUnionSelectAlias(ctx); // 为union的每个select生成一个alias
 
             // 2.生成新的VirtualTable
-            UnionTable currentTable = new UnionTable(VirtualTable.TableType.UNION_RESULT, currentAlias);
+            UnionTableNode currentTable = new UnionTableNode(SelectTableNode.TableType.UNION_RESULT, currentAlias);
 
             tableStack.push(currentTable); // 3.将当前VirtualTable入栈
 
@@ -107,14 +99,14 @@ public class VirtualTableVisitor extends SqlBaseBaseVisitor<Object> {
             visitChildren(ctx);
 
             // 5.将当前VirtualTable出栈,并从它的第一个select的virtualTable设置其column信息
-            VirtualTable topTable = tableStack.pop();
+            SelectTableNode topTable = tableStack.pop();
             if (currentTable != topTable) {
                 throw new RuntimeException("栈顶的table不是当前的union VirtualTable");
             }
             currentTable.generateColumns(); //设置column信息
 
             // 6.将当前VirtualTable加入其父VirtualTable（当前栈顶的VirtualTable）
-            VirtualTable parent = tableStack.peek();
+            SelectTableNode parent = tableStack.peek();
             if (null == parent) {
                 System.out.println("没有父节点,当前union的结果就是最终结果集");
                 topTable.setFinal(true); //栈内没有table，说明当前的table是最终的结果集
@@ -160,7 +152,7 @@ public class VirtualTableVisitor extends SqlBaseBaseVisitor<Object> {
             }
 
             // 2.生成新的VirtualTable
-            VirtualTable currentTable = new VirtualTable(VirtualTable.TableType.SELECT_RESULT, currentAlias);
+            SelectTableNode currentTable = new SelectTableNode(SelectTableNode.TableType.SELECT_RESULT, currentAlias);
 
             tableStack.push(currentTable); // 3.将当前VirtualTable入栈
 
@@ -168,16 +160,18 @@ public class VirtualTableVisitor extends SqlBaseBaseVisitor<Object> {
             visitChildren(ctx);
 
             // 5.将当前VirtualTable出栈
-            VirtualTable topTable = tableStack.pop();
+            SelectTableNode topTable = tableStack.pop();
             if (currentTable != topTable) {
                 throw new RuntimeException("栈顶的table不是当前的VirtualTable");
             }
 
             // 6.将当前VirtualTable加入其父VirtualTable（当前栈顶的VirtualTable）
-            VirtualTable parent = tableStack.peek();
+            SelectTableNode parent = tableStack.peek();
             if (null == parent) {
-                System.out.println("没有父节点,当前Select的结果就是最终结果集");
-                currentTable.setFinal(true); //栈内没有table，说明当前的table是最终的结果集
+                if (!isInWith) {
+                    System.out.println("没有父节点，而且也不在with子句内,当前Select的结果就是最终结果集");
+                    currentTable.setFinal(true); //栈内没有table，说明当前的table是最终的结果集
+                }
             } else {
                 parent.addDependencyTable(currentTable);
                 currentTable.addParentTable(parent);
@@ -225,34 +219,47 @@ public class VirtualTableVisitor extends SqlBaseBaseVisitor<Object> {
                 currentAlias = sourceTableName;
             }
 
-            // 2.生成新的VirtualTable
-            VirtualSourceTable currentTable = new VirtualSourceTable(dbName, sourceTableName, currentAlias);
-
-            tableStack.push(currentTable); // 3.将当前VirtualTable入栈
-
-            /** 4.访问ctx的子节点 */
-            visitChildren(ctx);
-
-            // 5.将当前VirtualTable出栈
-            VirtualTable topTable = tableStack.pop();
-            if (currentTable != topTable) {
-                throw new RuntimeException("栈顶的table不是当前的source VirtualTable");
+            // 创建新的TableNode, 先判断是否已经存在同名的with子句，如果存在，那么这个sourceTableName不是真正的源表
+            SelectTableNode currentTable = null;
+            SelectTableNode selectTableNode = visitedTable.get(sourceTableName);
+            if (null != selectTableNode) {
+                currentTable = selectTableNode;
+            } else {
+                // 生成新的SourceTableNode
+                currentTable = new SourceTableNode(dbName, sourceTableName, currentAlias);
             }
 
-            // 6.将当前VirtualTable加入其父VirtualTable（当前栈顶的VirtualTable）
-            VirtualTable parent = tableStack.peek();
+
+            // 将当前VirtualTable加入其父VirtualTable（当前栈顶的VirtualTable）
+            SelectTableNode parent = tableStack.peek();
             if (null == parent) {
                 throw new RuntimeException("SourceVirtualTable: '" + ctx.getText() + "'没有parent table");
             } else {
                 parent.addDependencyTable(currentTable);
                 currentTable.addParentTable(parent);
-//                // 生成列信息
-//                currentTable.generateColumns();
 
                 // 当前VirtualTable构建完毕
                 visitedTable.put(currentTable.getTableAlias(), currentTable);
             }
         }
+        return null;
+    }
+
+    /**
+     * 进入with子句
+     *
+     * @param ctx
+     * @return
+     */
+    @Override
+    public Object visitWith(SqlBaseParser.WithContext ctx) {
+        // 进入with子句
+        isInWith = true;
+        // 访问子节点
+        visitChildren(ctx);
+
+        // 退出with子句
+        isInWith = false;
         return null;
     }
 
@@ -314,11 +321,11 @@ public class VirtualTableVisitor extends SqlBaseBaseVisitor<Object> {
      *
      * @return
      */
-    protected VirtualTable findFinalTable() {
-        VirtualTable finalTable = null;
+    protected SelectTableNode findFinalTable() {
+        SelectTableNode finalTable = null;
         Set<String> keySet = visitedTable.keySet();
         for (String tableAlias : keySet) {
-            VirtualTable virtualTable = visitedTable.get(tableAlias);
+            SelectTableNode virtualTable = visitedTable.get(tableAlias);
             if (virtualTable.isFinal()) {
                 finalTable = virtualTable;
             }
@@ -331,7 +338,7 @@ public class VirtualTableVisitor extends SqlBaseBaseVisitor<Object> {
      *
      * @return
      */
-    public Map<String, VirtualTable> getVisitedTable() {
+    public Map<String, SelectTableNode> getVisitedTable() {
         return visitedTable;
     }
 }
