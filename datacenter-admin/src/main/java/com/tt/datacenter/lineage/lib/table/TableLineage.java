@@ -1,5 +1,7 @@
 package com.tt.datacenter.lineage.lib.table;
 
+import com.tt.datacenter.schema.base.Table;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,18 +9,17 @@ import java.util.List;
  * 表级别的血缘关系
  */
 public class TableLineage {
-    // 输出表，可能会存在多个insert into table，所以targetTable使用List类型
-    private final List<TargetTable> targetTables;
+    // 输出表，
+    private Table targetTable;
     // 来源表
-    private final List<SourceTable> sourceTables;
+    private final List<Table> sourceTables;
 
     public TableLineage() {
-        this.targetTables = new ArrayList<>();
         this.sourceTables = new ArrayList<>();
     }
 
-    public TableLineage(List<TargetTable> targetTables, List<SourceTable> sourceTables) {
-        this.targetTables = targetTables;
+    public TableLineage(Table targetTable, List<Table> sourceTables) {
+        this.targetTable = targetTable;
         this.sourceTables = sourceTables;
     }
 
@@ -37,19 +38,19 @@ public class TableLineage {
      * @param sourceTable source table
      * @return add result
      */
-    public boolean addSourceTable(SourceTable sourceTable) {
+    public boolean addSourceTable(Table sourceTable) {
         return sourceTables.add(sourceTable);
     }
 
-    public boolean addSinkTable(TargetTable targetTable) {
-        return targetTables.add(targetTable);
+    public void setTargetTable(Table targetTable) {
+        this.targetTable = targetTable;
     }
 
-    public List<SourceTable> getSourceTables() {
+    public Table getTargetTable() {
+        return targetTable;
+    }
+
+    public List<Table> getSourceTables() {
         return sourceTables;
-    }
-
-    public List<TargetTable> getTargetTables() {
-        return targetTables;
     }
 }

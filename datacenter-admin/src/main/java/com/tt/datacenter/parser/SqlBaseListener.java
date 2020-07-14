@@ -1822,46 +1822,6 @@ public interface SqlBaseListener extends ParseTreeListener {
 	 */
 	void exitGroupingOperation(SqlBaseParser.GroupingOperationContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link SqlBaseParser#function}.
-	 * @param ctx the parse tree
-	 */
-	void enterFunction(SqlBaseParser.FunctionContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link SqlBaseParser#function}.
-	 * @param ctx the parse tree
-	 */
-	void exitFunction(SqlBaseParser.FunctionContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link SqlBaseParser#function_parameters}.
-	 * @param ctx the parse tree
-	 */
-	void enterFunction_parameters(SqlBaseParser.Function_parametersContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link SqlBaseParser#function_parameters}.
-	 * @param ctx the parse tree
-	 */
-	void exitFunction_parameters(SqlBaseParser.Function_parametersContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link SqlBaseParser#function_arguments}.
-	 * @param ctx the parse tree
-	 */
-	void enterFunction_arguments(SqlBaseParser.Function_argumentsContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link SqlBaseParser#function_arguments}.
-	 * @param ctx the parse tree
-	 */
-	void exitFunction_arguments(SqlBaseParser.Function_argumentsContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link SqlBaseParser#function_name}.
-	 * @param ctx the parse tree
-	 */
-	void enterFunction_name(SqlBaseParser.Function_nameContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link SqlBaseParser#function_name}.
-	 * @param ctx the parse tree
-	 */
-	void exitFunction_name(SqlBaseParser.Function_nameContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code basicStringLiteral}
 	 * labeled alternative in {@link SqlBaseParser#string}.
 	 * @param ctx the parse tree

@@ -2,18 +2,16 @@ package com.tt.datacenter.test;
 
 
 import com.alibaba.fastjson.JSON;
-import com.tt.datacenter.lineage.clickhouse.CkTableLineageBuilder;
 import com.tt.datacenter.lineage.clickhouse.InsertSelectVisitor;
-import com.tt.datacenter.lineage.clickhouse.SelectVirtualTableWithColumnVisitor;
 import com.tt.datacenter.lineage.clickhouse.SelectVirtualTableVisitor;
+import com.tt.datacenter.lineage.clickhouse.SelectVirtualTableWithColumnVisitor;
 import com.tt.datacenter.lineage.lib.column.ColumnLineage;
-import com.tt.datacenter.lineage.lib.column.ColumnLineageBuilder;
+import com.tt.datacenter.lineage.lib.column.LineageBuilder;
 import com.tt.datacenter.lineage.lib.table.TableLineage;
 import com.tt.datacenter.lineage.union.InsertTableNode;
 import com.tt.datacenter.lineage.union.SelectTableNode;
 import com.tt.datacenter.parser.SqlBaseLexer;
 import com.tt.datacenter.parser.SqlBaseParser;
-import com.tt.datacenter.schema.BaseTable;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -61,18 +59,6 @@ public class Test {
 
     }
 
-    public static void iterParserTree(ParseTree parseTree) {
-
-        CkTableLineageBuilder lineageBuilder = new CkTableLineageBuilder();
-
-        TableLineage tableLineage = lineageBuilder.build(parseTree);
-        for (BaseTable sourceTable : tableLineage.getSourceTables()) {
-            System.out.println("input table: "+sourceTable);
-        }
-        for (BaseTable sinkTable : tableLineage.getTargetTables()) {
-            System.out.println("output table: "+sinkTable);
-        }
-    }
 
 
 
@@ -110,10 +96,15 @@ public class Test {
         InsertTableNode tableTree = visitor.parseTreeToInsertTableTree(parseTree);
 //        parseTree.accept(visitor);
 
-        ColumnLineageBuilder columnLineageBuilder = new ColumnLineageBuilder();
-        ColumnLineage columnLineage = columnLineageBuilder.build(tableTree);
+        System.out.println(JSON.toJSONString(tableTree));
+
+        LineageBuilder lineageBuilder = new LineageBuilder();
+        ColumnLineage columnLineage = lineageBuilder.buildColumnLineage(tableTree);
         String jsonString = JSON.toJSONString(columnLineage);
         System.out.println(jsonString);
+        TableLineage tableLineage = lineageBuilder.buildTableLineage(tableTree);
+        System.out.println(JSON.toJSONString(tableLineage));
+
     }
 
 
@@ -124,8 +115,8 @@ public class Test {
         SelectTableNode tableTree = visitor.parseTreeToSelectTableTree(parseTree);
 //        parseTree.accept(visitor);
 
-        ColumnLineageBuilder columnLineageBuilder = new ColumnLineageBuilder();
-        ColumnLineage columnLineage = columnLineageBuilder.build(tableTree);
+        LineageBuilder lineageBuilder = new LineageBuilder();
+        ColumnLineage columnLineage = lineageBuilder.buildColumnLineage(tableTree);
         String jsonString = JSON.toJSONString(columnLineage);
         System.out.println(jsonString);
 
@@ -222,11 +213,11 @@ public class Test {
             "\n" +
             "\tglobal any left join (\n" +
             "\t\tselect id channelId, ifNull(name, '') channelName, pid, ifNull(pname, '') pname, ifNull(tg_uid, '') tgUid, ifNull(tg_realname, '') tgUser, ifNull(tg_chnl_type, '') tgChnlType, ifNull(tg_chnl_type_name, '') tgChnlTypeName, ifNull(departmentId, '') departmentId, ifNull(departmentName, '') departmentName\n" +
-            "\t\tfrom v_dwd_channel d1\n" +
+            "\t\tfrom v_dwd_channel dd1\n" +
             "\t\tglobal any left join (\n" +
             "\t\t\tselect code, name departmentName from v_dc_dict where pcode='chDepartment'\n" +
-            "\t\t) d2 on d2.code = d1.chnlType\n" +
-            "\t\twhere d1.level=2\n" +
+            "\t\t) d2 on d2.code = dd1.chnlType\n" +
+            "\t\twhere dd1.level=2\n" +
             "\t) d on d.channelId = c.channelId\n" +
             "\n" +
             "\t-- 贵族等级，因为有cycle_begin_ts相同的记录，所以要另外用order_id判断最大的nobility_level\n" +
@@ -239,7 +230,7 @@ public class Test {
             "\t\t\t\targMax(nobility_level, cycle_begin_ts) as nobility_level_ts\n" +
             "\t\t\tfrom ods_nobility_all\n" +
             "\t\t\tgroup by uid\n" +
-            "\t\t)\n" +
+            "\t\t) tmp1\n" +
             "\t) e on e.uid = u.uid\n" +
             "\n" +
             "\t-- 获取spark分析后的省市\n" +

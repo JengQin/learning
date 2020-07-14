@@ -21,6 +21,8 @@ public class SelectVirtualTableVisitor extends SqlBaseBaseVisitor<Object> {
     protected boolean isInSelectSingle = false;  // 记录当前是否是正处于selectSingle解析阶段，只有处于selectSingle阶段才需要解析出列的依赖关系
     protected boolean isInWhere = false; // 记录当前是否正处于where子句解析阶段
     protected boolean isInWith = false; // 记录当前是否正处于with子句阶段
+    // with子句中定义的table
+    protected Map<String, SelectTableNode> withClauseTable = new HashMap<>();
 
     // alias后缀，每调用一次就加1
     private int unionAliasSuffix = 0;
@@ -147,6 +149,7 @@ public class SelectVirtualTableVisitor extends SqlBaseBaseVisitor<Object> {
                 if (tableStack.peek() == null) {
                     currentAlias = finalSelectVirtualTable;
                 } else {
+                    System.out.println(ctx.getRuleIndex()+" === > "+ctx.getText());
                     throw new RuntimeException("当前栈顶不为空，但是没有可用的alias");
                 }
             }
@@ -178,6 +181,10 @@ public class SelectVirtualTableVisitor extends SqlBaseBaseVisitor<Object> {
             }
             // 当前VirtualTable构建完毕
             visitedTable.put(currentTable.getTableAlias(), currentTable);
+            // 判断是否是with子句中生成的
+            if (isInWith) {
+                withClauseTable.put(currentTable.getTableAlias(), currentTable);
+            }
         }
 
         return null;
@@ -221,7 +228,7 @@ public class SelectVirtualTableVisitor extends SqlBaseBaseVisitor<Object> {
 
             // 创建新的TableNode, 先判断是否已经存在同名的with子句，如果存在，那么这个sourceTableName不是真正的源表
             SelectTableNode currentTable = null;
-            SelectTableNode selectTableNode = visitedTable.get(sourceTableName);
+            SelectTableNode selectTableNode = withClauseTable.get(sourceTableName);
             if (null != selectTableNode) {
                 currentTable = selectTableNode;
             } else {

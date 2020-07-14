@@ -1076,30 +1076,6 @@ public interface SqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitGroupingOperation(SqlBaseParser.GroupingOperationContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link SqlBaseParser#function}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFunction(SqlBaseParser.FunctionContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link SqlBaseParser#function_parameters}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFunction_parameters(SqlBaseParser.Function_parametersContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link SqlBaseParser#function_arguments}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFunction_arguments(SqlBaseParser.Function_argumentsContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link SqlBaseParser#function_name}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFunction_name(SqlBaseParser.Function_nameContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code basicStringLiteral}
 	 * labeled alternative in {@link SqlBaseParser#string}.
 	 * @param ctx the parse tree

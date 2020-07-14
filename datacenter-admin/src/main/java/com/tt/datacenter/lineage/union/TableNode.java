@@ -1,5 +1,7 @@
 package com.tt.datacenter.lineage.union;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +31,7 @@ public abstract class TableNode {
     // 依赖的VirtualTable
     protected List<TableNode> dependencyTable = new ArrayList<>();
 
+    @JSONField(serialize = false)
     // 上层的父节点，通常情况下只有一个parent，但如果是with子句中的select，有可能会被多个parent引用
     protected List<TableNode> parentTable = new ArrayList<>();
 
@@ -118,7 +121,7 @@ public abstract class TableNode {
             }
         }
 
-        throw new RuntimeException(this.tableAlias + "的所有dependencyTable都没有这个column: " + tableAlias);
+        throw new RuntimeException(this.tableAlias + "的所有dependencyTable都没有这个column: " + columnName);
     }
 
     public List<VirtualColumn> getColumns() {

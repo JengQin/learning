@@ -1,5 +1,6 @@
 package com.tt.datacenter.lineage.clickhouse;
 
+import com.alibaba.fastjson.JSON;
 import com.tt.datacenter.lineage.union.*;
 import com.tt.datacenter.parser.SqlBaseParser;
 import com.tt.datacenter.schema.base.Expression;
@@ -33,6 +34,8 @@ public class SelectVirtualTableWithColumnVisitor extends SelectVirtualTableVisit
 
         // 2. 生成SourceTable的列信息
         generateSourceTableColumn();
+
+        System.out.println(JSON.toJSONString(finalTable));
 
         // 3. 生成Column的依赖信息
         dfsVirtualTableTree(finalTable);
@@ -107,8 +110,13 @@ public class SelectVirtualTableWithColumnVisitor extends SelectVirtualTableVisit
         for (String tableAlias : keySet) {
             SelectTableNode virtualTable = visitedTable.get(tableAlias);
             if (virtualTable.getType() == SelectTableNode.TableType.SOURCE) {
-                // 生成列信息
-                ((SourceTableNode) virtualTable).generateColumns();
+                try {
+                    // 生成列信息
+                    ((SourceTableNode) virtualTable).generateColumns();
+                } catch (Exception e) {
+                    System.out.println(virtualTable.getTableAlias());
+                    throw e;
+                }
             }
         }
     }

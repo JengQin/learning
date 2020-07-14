@@ -36,9 +36,9 @@ public class SourceTableNode extends SelectTableNode {
         // 生成列信息
         for (VirtualColumn parentColumn : parentColumns) {
             for (ColumnReference columnRef : parentColumn.getExpression().getColumnReferences()) {
+                // TODO: 2020/7/10/010 源表的列信息目前只能从parent中获取。这种方法不够严谨，以后需要改成读取数据库，
                 // 判断父表的column表达式中是否包含当前表的列
                 if (1 == size || columnRef.getTable().equals(tableAlias)) {
-                    // TODO: 2020/7/10/010 源表的列信息目前只能从parent中获取，columnIndex永远是null。这种方法不够严谨，以后需要改成读取数据库，
                     VirtualColumn currentColumn = new VirtualColumn(columnRef.getColumnName(), getColumnSize());
 
                     if (!getColumns().contains(currentColumn)) {
