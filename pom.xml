@@ -22,6 +22,7 @@
         <module>calcite-learn</module>
         <module>antlr-learn</module>
         <module>datacenter-admin</module>
+        <module>aducative</module>
     </modules>
 
     <properties>
