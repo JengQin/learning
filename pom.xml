@@ -23,6 +23,7 @@
         <module>antlr-learn</module>
         <module>datacenter-admin</module>
         <module>aducative</module>
+        <module>Design-patterns-learn</module>
     </modules>
 
     <properties>
