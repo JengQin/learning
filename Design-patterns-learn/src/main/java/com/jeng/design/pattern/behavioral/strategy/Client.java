@@ -1,6 +1,6 @@
-package com.jeng.design.pattern.strategy;
+package com.jeng.design.pattern.behavioral.strategy;
 
-import com.jeng.design.pattern.strategy.comparator.DogComparator;
+import com.jeng.design.pattern.behavioral.strategy.comparator.DogComparator;
 
 public class Client {
     public static void main(String[] args) {

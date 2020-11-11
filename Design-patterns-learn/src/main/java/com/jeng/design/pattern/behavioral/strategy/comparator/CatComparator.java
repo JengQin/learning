@@ -1,7 +1,7 @@
-package com.jeng.design.pattern.strategy.comparator;
+package com.jeng.design.pattern.behavioral.strategy.comparator;
 
-import com.jeng.design.pattern.strategy.Cat;
-import com.jeng.design.pattern.strategy.Comparator;
+import com.jeng.design.pattern.behavioral.strategy.Cat;
+import com.jeng.design.pattern.behavioral.strategy.Comparator;
 
 public class CatComparator implements Comparator<Cat> {
     @Override

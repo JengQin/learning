@@ -1,4 +1,4 @@
-package com.jeng.design.pattern.strategy;
+package com.jeng.design.pattern.behavioral.strategy;
 
 public class Cat {
     private int weight;

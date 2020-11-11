@@ -1,7 +1,7 @@
-package com.jeng.design.pattern.strategy.comparator;
+package com.jeng.design.pattern.behavioral.strategy.comparator;
 
-import com.jeng.design.pattern.strategy.Comparator;
-import com.jeng.design.pattern.strategy.Dog;
+import com.jeng.design.pattern.behavioral.strategy.Comparator;
+import com.jeng.design.pattern.behavioral.strategy.Dog;
 
 public class DogComparator implements Comparator<Dog> {
     @Override
