@@ -1,7 +1,6 @@
 package com.jeng.design.pattern.creational.factory.factories;
 
 import com.jeng.design.pattern.creational.factory.*;
-import com.jeng.design.pattern.factory.*;
 
 import java.util.HashMap;
 
