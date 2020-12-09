@@ -23,9 +23,17 @@ public class HashMapTest {
     * 计算hashcode:
     * */
 
+    /*
+    * 1.HashMap中位运算的使用
+    * 2.jdk7中为什么多线程情况下HashMap扩容会出现问题？如何解决？
+    * 3.JDK8中关于HashMap的优化
+    * */
+
 
     public static void main(String[] args) {
         Map<String, String> map = new HashMap<>();
-        map.put("java", "90");
+        System.out.println(map.put("java", "90"));
+        System.out.println(map.put("java", "80"));
+        System.out.println(map.put("java", "100"));
     }
 }
