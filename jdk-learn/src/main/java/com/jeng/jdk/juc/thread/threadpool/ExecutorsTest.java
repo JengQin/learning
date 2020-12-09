@@ -2,6 +2,7 @@ package com.jeng.jdk.juc.thread.threadpool;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class ExecutorsTest {
@@ -10,7 +11,8 @@ public class ExecutorsTest {
         System.out.println("CPU核数：" + num);
 //        ExecutorService threadPool = Executors.newFixedThreadPool(5);
 //        ExecutorService threadPool = Executors.newSingleThreadExecutor();
-        ExecutorService threadPool = Executors.newCachedThreadPool();
+        ThreadPoolExecutor threadPool = (ThreadPoolExecutor)Executors.newCachedThreadPool();
+
 
         try {
             for (int i = 0; i < 10; i++) {
