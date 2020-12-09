@@ -25,6 +25,7 @@ public class HashMapTest {
 
     /*
     * 1.HashMap中位运算的使用
+    *   1) 求容量阈值tableSizeFor：根据创建HashMap时传入的capacity，阈值取大于capacity且最近的2的幂
     * 2.jdk7中为什么多线程情况下HashMap扩容会出现问题？如何解决？
     * 3.JDK8中关于HashMap的优化
     * */
@@ -35,5 +36,20 @@ public class HashMapTest {
         System.out.println(map.put("java", "90"));
         System.out.println(map.put("java", "80"));
         System.out.println(map.put("java", "100"));
+
+        System.out.println(Float.isNaN(4.1f));
+
+        System.out.println(tableSizeFor(1023));
+    }
+
+    private static int tableSizeFor(int cap) {
+        int n = cap - 1;
+        n |= n >> 1;
+        n |= n >> 2;
+        n |= n >> 4;
+        n |= n >> 8;
+        n |= n >> 16;
+
+        return n + 1;
     }
 }
