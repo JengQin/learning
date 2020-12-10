@@ -17,6 +17,13 @@ public class HashMapTest {
 
     /*
     * put插入流程：
+    *   1）获取key的hash值
+    *   2).检查数组table是否为空，如果为空，则执行一次resize()扩容操作
+    *   3）使用i=(table.length-1) & hash计算newNode要插入的bin，
+    *       a）如果table[i]==null,则直接将newNode插入到table[i]
+    *       b）如果table[i]!=null，判断当前bin是tree结构还是链表结构
+    *           1)如果是链表结构，遍历链表查找key的位置，如果key不存在则采用尾插入法，将newNode加入链表中，并判断是否进行treeIfBin转红黑树操作
+    *           2）如果是tree结构，则执行putTreeVal向红黑树put节点
     * get读取流程：
     * 扩容流程：
     * rehash流程：
