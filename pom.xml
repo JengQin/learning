@@ -24,6 +24,7 @@
         <module>datacenter-admin</module>
         <module>aducative</module>
         <module>Design-patterns-learn</module>
+        <module>leetcode</module>
     </modules>
 
     <properties>

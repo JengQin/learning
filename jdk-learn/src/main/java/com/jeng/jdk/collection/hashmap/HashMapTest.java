@@ -19,13 +19,13 @@ public class HashMapTest {
     * put插入流程：
     *   1）获取key的hash值
     *   2).检查数组table是否为空，如果为空，则执行一次resize()扩容操作
-    *   3）使用i=(table.length-1) & hash计算newNode要插入的bin，
+    *   3）使用i=(table.length-1) & hash计算newNode要插入的bin，因为table.length是2的倍数（二进制为10000...）减一后的二进制为1111...，所以(table.length-1) & hash后会得到一个小于table.length的数
     *       a）如果table[i]==null,则直接将newNode插入到table[i]
     *       b）如果table[i]!=null，判断当前bin是tree结构还是链表结构
     *           1)如果是链表结构，遍历链表查找key的位置，如果key不存在则采用尾插入法，将newNode加入链表中，并判断是否进行treeIfBin转红黑树操作
     *           2）如果是tree结构，则执行putTreeVal向红黑树put节点
     * get读取流程：
-    * 扩容流程：
+    * 扩容流程：capacity<<1, threshold<<1, 如果capacity>
     * rehash流程：
     * 计算hashcode:
     * */
@@ -39,14 +39,14 @@ public class HashMapTest {
 
 
     public static void main(String[] args) {
-        Map<String, String> map = new HashMap<>();
-        System.out.println(map.put("java", "90"));
-        System.out.println(map.put("java", "80"));
-        System.out.println(map.put("java", "100"));
-
-        System.out.println(Float.isNaN(4.1f));
-
-        System.out.println(tableSizeFor(1023));
+        HashMap<Integer, String> map = new HashMap<>(1<<30);
+        String value = "";
+        long startTime = System.currentTimeMillis();
+        for (int i = 0; i < 805306368; i++) {
+            map.put(i, value);
+        }
+        long endTime = System.currentTimeMillis();
+        System.out.println(String.format("map大小%d, 耗时%d",map.size(),(endTime-startTime)));
     }
 
     private static int tableSizeFor(int cap) {
