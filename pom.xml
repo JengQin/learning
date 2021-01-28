@@ -26,6 +26,7 @@
         <module>Design-patterns-learn</module>
         <module>leetcode</module>
         <module>data-structure</module>
+        <module>yarn-learn</module>
     </modules>
 
     <properties>
