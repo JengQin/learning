@@ -34,6 +34,9 @@ public class SocketWindowWordCount {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         /*创建connector，读取数据*/
         DataStreamSource<String> text = env.socketTextStream(hostName, port, "\n");
+
+        text.rebalance();
+
         /*数据转换*/
         SingleOutputStreamOperator<WordCount> wordStream = text.flatMap(new RichFlatMapFunction<String, WordCount>() {
             private IntCounter intCounter = new IntCounter();
