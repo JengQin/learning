@@ -33,5 +33,8 @@ public class L_1392 {
         } else {
             return "";
         }
+        String s = "{\"pageNo\":1,\"pageSize\":100000,\"productId\":\"ttvoice\",\"userGroupId\":342}";
     }
+
+    curl -X POST "http://10.10.74.153/datacenter-openads/openApi/userGroup/getUserGroupInfo" -H  "Request-Origion:SwaggerBootstrapUi" -H  "accept:*/*" -H  "Content-Type:application/json" -d ""
 }
