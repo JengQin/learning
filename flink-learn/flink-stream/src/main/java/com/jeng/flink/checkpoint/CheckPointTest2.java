@@ -16,8 +16,8 @@ import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.CheckpointConfig;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer010;
-import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer010;
+import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer;
+import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +62,7 @@ public class CheckPointTest2 {
         properties.setProperty("group.id", "test");
         List<String> topics = new ArrayList<>();
         topics.add("flink_checkpoint_test");
-        FlinkKafkaConsumer010<String> myConsumer = new FlinkKafkaConsumer010<>(topics, new SimpleStringSchema(), properties);
+        FlinkKafkaConsumer<String> myConsumer = new FlinkKafkaConsumer<>(topics, new SimpleStringSchema(), properties);
         myConsumer.setStartFromGroupOffsets();
 
         /*添加kafka source*/
@@ -121,7 +121,7 @@ public class CheckPointTest2 {
         });
 
         /*输出到kafka*/
-        FlinkKafkaProducer010<String> myProducer = new FlinkKafkaProducer010<String>(
+        FlinkKafkaProducer<String> myProducer = new FlinkKafkaProducer<String>(
                 "hadoop1:6667",
                 "flink_keyed_value_state_test",
                 new SimpleStringSchema()

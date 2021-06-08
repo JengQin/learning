@@ -15,7 +15,7 @@ import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer010;
+import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer;
 import org.apache.flink.util.Collector;
 
 /**
@@ -80,7 +80,7 @@ public class CheckPointTest {
             }
         });
         /*输出到kafka*/
-        FlinkKafkaProducer010<String> myProducer = new FlinkKafkaProducer010<String>(
+        FlinkKafkaProducer<String> myProducer = new FlinkKafkaProducer<String>(
                 "hadoop1:6667",
                 "flink_keyed_value_state_test",
                 new SimpleStringSchema()

@@ -13,11 +13,10 @@ import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple4;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.datastream.DataStream;
-import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer010;
-import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer010;
+import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer;
+import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer;
 import org.apache.flink.util.Collector;
 
 import java.util.ArrayList;
@@ -39,7 +38,7 @@ public class CheckPointWithOperatorID {
         properties.setProperty("group.id", "test");
         List<String> topics = new ArrayList<>();
         topics.add("flink_checkpoint_test");
-        FlinkKafkaConsumer010<String> myConsumer = new FlinkKafkaConsumer010<>(
+        FlinkKafkaConsumer<String> myConsumer = new FlinkKafkaConsumer<>(
                 topics,
                 new SimpleStringSchema(),
                 properties);
@@ -94,7 +93,7 @@ public class CheckPointWithOperatorID {
             }
         });
         /*输出到kafka*/
-        FlinkKafkaProducer010<String> myProducer = new FlinkKafkaProducer010<String>(
+        FlinkKafkaProducer<String> myProducer = new FlinkKafkaProducer<String>(
                 "hadoop1:6667",
                 "flink_keyed_value_state_test",
                 new SimpleStringSchema()

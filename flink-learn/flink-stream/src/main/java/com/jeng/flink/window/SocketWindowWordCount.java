@@ -1,5 +1,6 @@
 package com.jeng.flink.window;
 
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.flink.api.common.JobExecutionResult;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
@@ -34,7 +35,7 @@ public class SocketWindowWordCount {
                     collector.collect(word);
                 }
             }
-        });
+        }).setParallelism(1);
 
         SingleOutputStreamOperator<WordKey> wordKeyStream = wordStream.map(new MapFunction<String, WordKey>() {
             @Override
@@ -43,10 +44,10 @@ public class SocketWindowWordCount {
 
                 return new WordKey(s, key >= 0 ? key : key * -1);
             }
-        });
+        }).setParallelism(1);
 
         SingleOutputStreamOperator<String> wordCount = wordKeyStream.keyBy(WordKey::getKey)
-                .window(TumblingProcessingTimeWindows.of(Time.seconds(10)))
+                .window(TumblingProcessingTimeWindows.of(Time.seconds(20)))
                 .trigger(new CustomTrigger(3))
                 .process(new ProcessWindowFunction<WordKey, String, Long, TimeWindow>() {
                     @Override
@@ -57,12 +58,15 @@ public class SocketWindowWordCount {
                         int count = 0;
                         for (WordKey wordKey : elements) {
                             count++;
-                            System.out.println(String.format("start=%d, end=%d, key=%d, word=%s", start, end, key, wordKey.toString()));;
+                            System.out.println(String.format("key=%d, word=%s, start=%s, end=%s", key, wordKey.toString(),
+                                    DateFormatUtils.format(start, "yyyy-MM-dd HH:mm:ss"),
+                                    DateFormatUtils.format(end, "yyyy-MM-dd HH:mm:ss")));;
                         }
 
-                        out.collect(String.format("start=%d, end=%d, count=%d", start, end, count));
+                        out.collect(String.format("key=%d, count=%d, start=%s, end=%s",  key,count,DateFormatUtils.format(start,"yyyy-MM-dd HH:mm:ss"),
+                                DateFormatUtils.format(end,"yyyy-MM-dd HH:mm:ss")));
                     }
-                });
+                }).setParallelism(1);
 
         wordCount.print();
         try {

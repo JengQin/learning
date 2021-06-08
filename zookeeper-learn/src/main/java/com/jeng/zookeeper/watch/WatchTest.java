@@ -9,11 +9,12 @@ import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 
 public class WatchTest {
+    private static String zkHost ="192.168.9.226:2181";
 
     public static void main(String[] args) throws IOException, InterruptedException {
         final CountDownLatch countDownLatch = new CountDownLatch(1);
 
-        ZooKeeper zooKeeper = new ZooKeeper("hadoop1:2181", 3000, new Watcher() {
+        ZooKeeper zooKeeper = new ZooKeeper(zkHost, 3000, new Watcher() {
             public void process(WatchedEvent watchedEvent) {
                 String path = watchedEvent.getPath();
                 Event.KeeperState state = watchedEvent.getState();
