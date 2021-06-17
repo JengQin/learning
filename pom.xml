@@ -21,7 +21,6 @@
         <module>hive-learn</module>
         <module>calcite-learn</module>
         <module>antlr-learn</module>
-        <module>datacenter-admin</module>
         <module>aducative</module>
         <module>Design-patterns-learn</module>
         <module>leetcode</module>
@@ -29,6 +28,7 @@
         <module>yarn-learn</module>
         <module>tool-learn</module>
         <module>apollo-learn</module>
+        <module>spring-cloud/eureka</module>
     </modules>
 
     <properties>
