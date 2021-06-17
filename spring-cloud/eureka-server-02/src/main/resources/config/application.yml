@@ -1,20 +1,17 @@
 spring:
   application:
-    name: EurekaServer01
+    name: EurekaServer
 
 server:
-  port: 8761
+  port: 8762
 
 
 eureka:
   instance:
     hostname: ${hostname:localhost}
-#    hostname: eureka.dev.com
-#    statusPageUrl: https://${eureka.instance.hostname}:8762/info
-#    healthCheckUrl: https://${eureka.instance.hostname}:8762/health
-    homePageUrl: https://eureka.dev.com:8761
-    preferIpAddress: false
-    instance-id: ${eureka.instance.homePageUrl}
+    preferIpAddress: true
+    status-page-url-path: /info
+    health-check-url-path: /health
   server:
     peerEurekaNodesUpdateIntervalMs: 60000
     enableSelfPreservation: false
@@ -22,7 +19,7 @@ eureka:
     serviceUrl:
       # This setting will be overridden by eureka.service.url setting from ApolloConfigDB.ServerConfig or System Property
       # see com.ctrip.framework.apollo.biz.eureka.ApolloEurekaClientConfig
-      defaultZone: http://${eureka.instance.hostname}:8761/eureka/
+      defaultZone: http://${eureka.instance.hostname}:8080/eureka/
     healthcheck:
       enabled: true
     eurekaServiceUrlPollIntervalSeconds: 60

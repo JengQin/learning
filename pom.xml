@@ -29,6 +29,7 @@
         <module>tool-learn</module>
         <module>apollo-learn</module>
         <module>spring-cloud/eureka</module>
+        <module>spring-cloud/eureka-server-02</module>
     </modules>
 
     <properties>
