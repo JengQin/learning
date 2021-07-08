@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: OauthTestApplication
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+
+server:
+  port: 8080
+
+
+
+############### 登录配置
+#登录验证地址
+login:
+  url:
+  host: http://192.168.8.6:8005
+#使用密钥
+  client:
+    secret: gILwTGdkuwWoFvjR
